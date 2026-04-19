@@ -79,9 +79,6 @@ export default function Header() {
       </div>
 
       <div className="auth-status">
-        <button type="button" className="button secondary small" onClick={toggleTheme}>
-          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-        </button>
         {user ? (
           <>
             <span>Signed in as {user.email ?? user.id}</span>
@@ -99,6 +96,9 @@ export default function Header() {
         <Link href="/login" className="nav-link">
           {authEnabled ? 'Sign in' : 'Login info'}
         </Link>
+        <span className="nav-link" onClick={toggleTheme} style={{ cursor: 'pointer' }}>
+          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        </span>
       </nav>
     </header>
   );
