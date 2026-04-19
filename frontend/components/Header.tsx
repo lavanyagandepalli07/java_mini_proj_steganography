@@ -78,15 +78,6 @@ export default function Header() {
         </Link>
       </div>
 
-      <nav className="site-nav">
-        <Link href="/tool" className="nav-link">
-          Tool
-        </Link>
-        <Link href="/login" className="nav-link">
-          {authEnabled ? 'Sign in' : 'Login info'}
-        </Link>
-      </nav>
-
       <div className="auth-status">
         <button type="button" className="button secondary small" onClick={toggleTheme}>
           {theme === 'dark' ? 'Light mode' : 'Dark mode'}
@@ -98,10 +89,17 @@ export default function Header() {
               Sign out
             </button>
           </>
-        ) : (
-          <span>Guest mode enabled</span>
-        )}
+        ) : null}
       </div>
+
+      <nav className="site-nav">
+        <Link href="/tool" className="nav-link">
+          Tool
+        </Link>
+        <Link href="/login" className="nav-link">
+          {authEnabled ? 'Sign in' : 'Login info'}
+        </Link>
+      </nav>
     </header>
   );
 }
