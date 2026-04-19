@@ -11,15 +11,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState(
     authEnabled
-      ? 'Sign in or sign up to enable optional auth. Guest mode still works.'
-      : 'Supabase auth is not configured. Continue as guest.'
+      ? 'Welcome! Sign in or sign up to access optional account features.'
+      : 'Login is unavailable. Continue as guest to start hiding and revealing messages.'
   );
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!authEnabled || !supabase) {
-      setStatus('Authentication is disabled. Continue as guest.');
+      setStatus('Login is unavailable. Continue as guest to use the tool.');
       return;
     }
     if (!email || !password) {
@@ -28,7 +28,7 @@ export default function LoginPage() {
     }
 
     setLoading(true);
-    setStatus('Processing authentication...');
+    setStatus(mode === 'signUp' ? 'Creating your account...' : 'Signing you in...');
 
     try {
       if (mode === 'signUp') {
@@ -52,58 +52,78 @@ export default function LoginPage() {
       <Header />
       <main className="content-shell">
         <section className="auth-card">
-          <h1>Optional Supabase login</h1>
+          <div className="auth-intro">
+            <p className="eyebrow">Welcome</p>
+            <h1>Secure messages inside images</h1>
+            <p>
+              StegoText lets you hide and reveal secret text using image steganography. Login is optional — guest mode keeps the core tool available instantly.
+            </p>
+          </div>
+
           <p>{status}</p>
 
-          <form className="panel-form" onSubmit={handleSubmit}>
-            <div className="toggle-row">
-              <button
-                type="button"
-                className={mode === 'signIn' ? 'tab active' : 'tab'}
-                onClick={() => setMode('signIn')}
-              >
-                Sign in
-              </button>
-              <button
-                type="button"
-                className={mode === 'signUp' ? 'tab active' : 'tab'}
-                onClick={() => setMode('signUp')}
-              >
-                Sign up
-              </button>
+          {authEnabled ? (
+            <form className="panel-form" onSubmit={handleSubmit}>
+              <div className="toggle-row">
+                <button
+                  type="button"
+                  className={mode === 'signIn' ? 'tab active' : 'tab'}
+                  onClick={() => setMode('signIn')}
+                >
+                  Sign in
+                </button>
+                <button
+                  type="button"
+                  className={mode === 'signUp' ? 'tab active' : 'tab'}
+                  onClick={() => setMode('signUp')}
+                >
+                  Sign up
+                </button>
+              </div>
+
+              <label>
+                Email
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  required
+                />
+              </label>
+
+              <label>
+                Password
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Choose a secure password"
+                  required
+                />
+              </label>
+
+              <div className="form-actions">
+                <button type="submit" className="button primary" disabled={loading}>
+                  {loading ? 'Working...' : mode === 'signUp' ? 'Create account' : 'Sign in'}
+                </button>
+                <Link href="/tool" className="button secondary">
+                  Continue as guest
+                </Link>
+              </div>
+            </form>
+          ) : (
+            <div className="panel-form">
+              <p>
+                Login is currently unavailable. You can proceed to the StegoText tool immediately in guest mode.
+              </p>
+              <div className="form-actions">
+                <Link href="/tool" className="button primary">
+                  Continue as guest
+                </Link>
+              </div>
             </div>
-
-            <label>
-              Email
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@example.com"
-                required
-              />
-            </label>
-
-            <label>
-              Password
-              <input
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Choose a strong password"
-                required
-              />
-            </label>
-
-            <div className="form-actions">
-              <button type="submit" className="button primary" disabled={!authEnabled || loading}>
-                {loading ? 'Working...' : mode === 'signUp' ? 'Create account' : 'Sign in'}
-              </button>
-              <Link href="/tool" className="button secondary">
-                Continue as guest
-              </Link>
-            </div>
-          </form>
+          )}
         </section>
       </main>
     </div>
