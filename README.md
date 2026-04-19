@@ -59,3 +59,12 @@ Binary payload layout for reliable extraction:
 - Phase 5: end-to-end wiring of Hide and Reveal flows
 - Phase 6: UX polish, accessibility, and error handling
 - Phase 7: build readiness, README, and deployment notes
+
+## Java crypto module
+
+The repository includes a Java crypto engine at `java/com/stegotext/CryptoEngine.java`.
+- Implements PBKDF2-HMAC-SHA256 key derivation
+- Uses AES-GCM with a random 12-byte IV
+- Encodes payloads with a versioned header for reliable extraction
+
+This provides a Java source reference for the encryption/decryption layer while the UI remains React/Next.js.
