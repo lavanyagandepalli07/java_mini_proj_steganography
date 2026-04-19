@@ -59,8 +59,14 @@ Binary payload layout for reliable extraction:
 
 ## Deployment
 
-- **Frontend**: Deploy `frontend/` to Vercel or similar (e.g., `cd frontend && npm run build`)
-- **Backend**: Java code is for reference only; no server deployment needed
+- **Frontend**: Deploy `frontend/` to Vercel or similar.
+- **Build locally**:
+  - `cd frontend`
+  - `npm install`
+  - `npm run build`
+  - `npm run dev` to preview locally
+- **Backend**: Java code is for reference only; no server deployment needed.
+  - Optional compile check: `javac backend/java/com/stegotext/CryptoEngine.java`
 
 ## Phase plan
 - Phase 1: scaffold UI with skeleton pages and tabs ✅
@@ -69,7 +75,7 @@ Binary payload layout for reliable extraction:
 - Phase 4: stego embed/extract module ✅
 - Phase 5: end-to-end wiring of Hide and Reveal flows ✅
 - Phase 6: UX polish, accessibility, and error handling ✅
-- Phase 7: build readiness, README, and deployment notes
+- Phase 7: build readiness, README, and deployment notes ✅
 
 ## Supabase optional authentication
 
@@ -88,6 +94,10 @@ The repository includes a Java crypto engine at `backend/java/com/stegotext/Cryp
 - Encodes payloads with a versioned header for reliable extraction
 
 This provides a Java source reference for the encryption/decryption layer while the UI remains React/Next.js.
+
+## Build readiness
+- Verified frontend production build with `cd frontend && npm run build`.
+- Verified backend Java reference compiles with `javac backend/java/com/stegotext/CryptoEngine.java`.
 
 ## Browser crypto module
 
