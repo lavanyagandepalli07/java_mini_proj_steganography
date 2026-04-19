@@ -67,8 +67,8 @@ Binary payload layout for reliable extraction:
 - Phase 2: optional Supabase auth with guest mode ✅
 - Phase 3: browser crypto encrypt/decrypt module ✅
 - Phase 4: stego embed/extract module ✅
-- Phase 5: end-to-end wiring of Hide and Reveal flows
-- Phase 6: UX polish, accessibility, and error handling
+- Phase 5: end-to-end wiring of Hide and Reveal flows ✅
+- Phase 6: UX polish, accessibility, and error handling ✅
 - Phase 7: build readiness, README, and deployment notes
 
 ## Supabase optional authentication

@@ -15,8 +15,8 @@ const PBKDF2_ITERATIONS = 200_000;
 const GCM_TAG_LENGTH_BITS = 128;
 
 export async function encrypt(plaintext: string, password: string): Promise<CryptoResult> {
-  if (!plaintext || !password) {
-    return { success: false, error: 'Plaintext and password are required' };
+  if (!plaintext) {
+    return { success: false, error: 'Plaintext is required' };
   }
 
   try {
@@ -86,8 +86,8 @@ export async function encrypt(plaintext: string, password: string): Promise<Cryp
 }
 
 export async function decrypt(payload: Uint8Array, password: string): Promise<CryptoResult> {
-  if (!payload || payload.length < 11 || !password) {
-    return { success: false, error: 'Invalid payload or missing password' };
+  if (!payload || payload.length < 11) {
+    return { success: false, error: 'Invalid payload' };
   }
 
   try {

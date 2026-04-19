@@ -1,11 +1,12 @@
 type StatusAlertProps = {
   message: string;
   loading?: boolean;
+  variant?: 'info' | 'success' | 'error';
 };
 
-export default function StatusAlert({ message, loading = false }: StatusAlertProps) {
+export default function StatusAlert({ message, loading = false, variant = 'info' }: StatusAlertProps) {
   return (
-    <div className="status-alert" role="status" aria-live="polite">
+    <div className={`status-alert status-alert--${variant}`} role="status" aria-live="polite">
       <p>{loading ? 'Working…' : message}</p>
     </div>
   );
