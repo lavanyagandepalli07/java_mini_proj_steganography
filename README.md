@@ -63,9 +63,9 @@ Binary payload layout for reliable extraction:
 - **Backend**: Java code is for reference only; no server deployment needed
 
 ## Phase plan
-- Phase 1: scaffold UI with skeleton pages and tabs
-- Phase 2: optional Supabase auth with guest mode
-- Phase 3: browser crypto encrypt/decrypt module
+- Phase 1: scaffold UI with skeleton pages and tabs ✅
+- Phase 2: optional Supabase auth with guest mode ✅
+- Phase 3: browser crypto encrypt/decrypt module ✅
 - Phase 4: stego embed/extract module
 - Phase 5: end-to-end wiring of Hide and Reveal flows
 - Phase 6: UX polish, accessibility, and error handling
@@ -88,3 +88,11 @@ The repository includes a Java crypto engine at `backend/java/com/stegotext/Cryp
 - Encodes payloads with a versioned header for reliable extraction
 
 This provides a Java source reference for the encryption/decryption layer while the UI remains React/Next.js.
+
+## Browser crypto module
+
+The client-side crypto is implemented in `frontend/lib/crypto.ts` using Web Crypto API.
+- PBKDF2 with HMAC-SHA256 for key derivation
+- AES-GCM for authenticated encryption
+- Random salt and IV per operation
+- Versioned binary payload format matching the spec
