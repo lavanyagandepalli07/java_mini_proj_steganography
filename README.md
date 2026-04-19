@@ -70,12 +70,61 @@ Binary payload layout for reliable extraction:
 
 ## Phase plan
 - Phase 1: scaffold UI with skeleton pages and tabs ✅
+  - Built the main layout, landing page, auth page, and tool page structure.
+  - Added a tabbed Hide/Reveal interface and shared header/status UI.
 - Phase 2: optional Supabase auth with guest mode ✅
+  - Added optional email/password login and registration flows.
+  - Guest mode remains available when Supabase env vars are unset.
 - Phase 3: browser crypto encrypt/decrypt module ✅
+  - Implemented Web Crypto API encryption with PBKDF2-HMAC-SHA256 and AES-GCM.
+  - Packaged payloads with versioned header, salt, IV, and ciphertext.
 - Phase 4: stego embed/extract module ✅
+  - Developed Canvas-based LSB embedding into RGB pixel data.
+  - Added extraction logic with payload validation and capacity handling.
 - Phase 5: end-to-end wiring of Hide and Reveal flows ✅
+  - Connected UI forms to crypto and stego modules.
+  - Embedded encrypted data into PNG and enabled secret extraction/decryption.
 - Phase 6: UX polish, accessibility, and error handling ✅
+  - Improved status alerts, form validation, and optional password behavior.
+  - Added image info feedback and more helpful error messages.
 - Phase 7: build readiness, README, and deployment notes ✅
+  - Verified production build, updated README, and documented deployment steps.
+
+## Phase details
+### Phase 1 — UI scaffold
+- Created the `frontend/` app shell with basic page routes.
+- Implemented the Hide / Reveal tool page and responsive layout.
+- Established the visual structure and baseline navigation.
+
+### Phase 2 — Authentication
+- Added optional Supabase auth integration in the frontend.
+- Built login form, auth state handling, and guest path behavior.
+- Ensured the core tool still works without auth configuration.
+
+### Phase 3 — Crypto module
+- Implemented browser-side encryption in `frontend/lib/crypto.ts`.
+- Used PBKDF2 for key derivation and AES-GCM for authenticated encryption.
+- Standardized the stego payload format for compatibility and safety.
+
+### Phase 4 — Stego module
+- Implemented `frontend/lib/stego.ts` for embed and extract workflows.
+- Used the Canvas API to read and modify image pixels securely.
+- Calculated payload capacity and enforced image size limits.
+
+### Phase 5 — End-to-end flow
+- Wired the Hide form to encrypt text and generate a downloadable PNG.
+- Wired the Reveal form to decode, decrypt, and display hidden text.
+- Managed file inputs, status updates, and browser download behavior.
+
+### Phase 6 — UX and polish
+- Added loading/feedback states and success/error alerts.
+- Allowed optional password use and clarified validation rules.
+- Provided image metadata so users understand capacity and file details.
+
+### Phase 7 — Final readiness
+- Verified frontend build success with `npm run build`.
+- Confirmed Java reference source compiles with `javac`.
+- Updated README with deployment notes and build instructions.
 
 ## Supabase optional authentication
 

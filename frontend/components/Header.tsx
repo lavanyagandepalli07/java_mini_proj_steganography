@@ -5,8 +5,35 @@ import { useEffect, useState } from 'react';
 import { supabase, authEnabled } from '../lib/supabaseClient';
 import type { User } from '@supabase/supabase-js';
 
+type ThemeMode = 'light' | 'dark';
+
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
+  const [theme, setTheme] = useState<ThemeMode>('light');
+
+  useEffect(() => {
+    const storedTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
+    const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = storedTheme === 'dark' || storedTheme === 'light'
+      ? storedTheme
+      : prefersDark
+      ? 'dark'
+      : 'light';
+
+    setTheme(initialTheme as ThemeMode);
+    document.documentElement.dataset.theme = initialTheme as string;
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem('theme', theme);
+    }
+  }, [theme]);
+
+  function toggleTheme() {
+    setTheme((current) => (current === 'light' ? 'dark' : 'light'));
+  }
 
   useEffect(() => {
     if (!authEnabled || !supabase) {
@@ -59,6 +86,9 @@ export default function Header() {
       </nav>
 
       <div className="auth-status">
+        <button type="button" className="button secondary small" onClick={toggleTheme}>
+          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        </button>
         {user ? (
           <>
             <span>Signed in as {user.email ?? user.id}</span>
