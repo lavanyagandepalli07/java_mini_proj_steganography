@@ -17,16 +17,12 @@ export default function Home() {
               Try Hide / Reveal
             </Link>
             <Link href="/login" className="button secondary">
-              Sign in (optional)
+              Sign in
             </Link>
           </div>
         </section>
 
         <section className="features-grid">
-          <article>
-            <h2>Guest-friendly</h2>
-            <p>Use the stego tool immediately without signing in. Authentication is optional.</p>
-          </article>
           <article>
             <h2>Secure browser crypto</h2>
             <p>PBKDF2 and AES-GCM run in the browser using Web Crypto API. Text is encrypted before embedding.</p>
