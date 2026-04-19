@@ -60,6 +60,15 @@ Binary payload layout for reliable extraction:
 - Phase 6: UX polish, accessibility, and error handling
 - Phase 7: build readiness, README, and deployment notes
 
+## Supabase optional authentication
+
+To enable optional auth, configure the following environment variables in `.env.local`:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+Guest mode works even when these variables are not set, so the hide/reveal tool remains fully usable without login.
+
 ## Java crypto module
 
 The repository includes a Java crypto engine at `java/com/stegotext/CryptoEngine.java`.
