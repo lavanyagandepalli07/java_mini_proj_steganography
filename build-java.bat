@@ -1,5 +1,5 @@
 @echo off
-cd java
+cd backend\java
 javac com\stegotext\CryptoEngine.java
 if errorlevel 1 (
   echo Java compilation failed.

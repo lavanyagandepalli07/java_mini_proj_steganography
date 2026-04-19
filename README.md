@@ -2,7 +2,13 @@
 
 A simple client-side steganography web app built in Next.js.
 
+## Project Structure
+
+- `frontend/`: Next.js React app for the web interface
+- `backend/`: Java reference implementation for crypto (not deployed as server)
+
 ## Phase 0 — Specification and plan
+
 
 ### Algorithms
 - Encryption: browser Web Crypto API
@@ -51,6 +57,11 @@ Binary payload layout for reliable extraction:
 - Clear status/alerts, loading states, accessible labels, keyboard-friendly controls
 - PNG-only guidance and capacity feedback
 
+## Deployment
+
+- **Frontend**: Deploy `frontend/` to Vercel or similar (e.g., `cd frontend && npm run build`)
+- **Backend**: Java code is for reference only; no server deployment needed
+
 ## Phase plan
 - Phase 1: scaffold UI with skeleton pages and tabs
 - Phase 2: optional Supabase auth with guest mode
@@ -71,7 +82,7 @@ Guest mode works even when these variables are not set, so the hide/reveal tool 
 
 ## Java crypto module
 
-The repository includes a Java crypto engine at `java/com/stegotext/CryptoEngine.java`.
+The repository includes a Java crypto engine at `backend/java/com/stegotext/CryptoEngine.java`.
 - Implements PBKDF2-HMAC-SHA256 key derivation
 - Uses AES-GCM with a random 12-byte IV
 - Encodes payloads with a versioned header for reliable extraction
