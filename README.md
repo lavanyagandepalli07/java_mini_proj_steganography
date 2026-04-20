@@ -1,161 +1,115 @@
-\# StegoText
+# StegoText
 
-A simple client-side steganography web app built in Next.js.
+A comprehensive client-side steganography and secure communication web suite built in Next.js.
+
+## Key Features
+
+- **Multi-Format Steganography**: Hide secret text inside PNG images or WAV audio files without affecting their apparent quality.
+- **Client-Side Cryptography**: True zero-knowledge architecture. All encryption/decryption happens in the browser using the Web Crypto API.
+  - PBKDF2 with HMAC-SHA256 for key derivation.
+  - AES-GCM for authenticated encryption with a random salt and IV per operation.
+- **Advanced Steganography Algorithms**:
+  - **Standard (Spatial LSB)**: High capacity embedding for both images and audio.
+  - **Advanced (Randomized DCT)**: Highest stealth for images, resistant to basic statistical analysis.
+- **Plausible Deniability**: Embed two separate messages using two different passwords. If forced to reveal a password, you can provide the decoy password, keeping the true secret hidden.
+- **Steganalysis Tool**: Built-in LSB plane visualizer. Upload any image to see its noise profile and detect if it might contain hidden data.
+- **Burn-After-Reading Secure Sharing**: Generate shareable links for your stego files. When the recipient downloads the file, it is automatically and permanently deleted from the secure cloud storage.
+- **Dark & Light Mode**: Built-in theming that respects system preferences with manual overrides.
+- **Seamless User Experience**: Clean, responsive UI with informative error handling, capacity estimations, and seamless guest functionality alongside optional account features.
 
 ## Project Structure
 
-- `frontend/`: Next.js React app for the web interface
-- `backend/`: Java reference implementation for crypto (not deployed as server)
+- `frontend/`: Next.js React application for the web interface, crypto, and stego logic.
+- `backend/`: Java reference implementation for the cryptographic payload structure (not deployed as a server, provided for reference).
 
-## Phase 0 — Specification and plan
+## Technical Architecture
 
+### Cryptography & Payload Format
+The payload is structured to ensure reliable extraction and decryption:
+- `MAGIC`: 4 bytes `0x53 0x54 0x45 0x47` (`STEG`)
+- `VERSION`: 1 byte (currently `0x01`)
+- `LENGTH`: 4 bytes unsigned big-endian ciphertext length
+- `SALT_LEN`: 1 byte salt length (fixed 16 bytes)
+- `IV_LEN`: 1 byte IV length (fixed 12 bytes)
+- `SALT`: 16 bytes for PBKDF2
+- `IV`: 12 bytes for AES-GCM
+- `CIPHERTEXT`: Encrypted UTF-8 text
 
-### Algorithms
-- Encryption: browser Web Crypto API
-  - PBKDF2 with HMAC-SHA256 for key derivation
-  - AES-GCM for authenticated encryption
-  - Random salt and random 12-byte IV for each encryption operation
-- Steganography: Canvas LSB embedding
-  - Use image pixel data from uploaded images
-  - Embed binary payload bits into the least significant bits of RGB channels only
-  - Avoid alpha channel to preserve visuals and compatibility
+### Steganography Engines
+- **Image LSB**: Embeds payload bits into the least significant bits of the Red, Green, and Blue channels. Ignores the alpha channel to preserve transparency and avoid visual artifacts.
+- **Image DCT**: Translates the image into the frequency domain using Discrete Cosine Transform. Embeds bits into specific quantized coefficients of 8x8 blocks, randomized via a password-derived PRNG.
+- **Audio LSB**: Parses WAV file headers and embeds bits into the LSB of the audio sample data.
+- **Plausible Deniability Engine**: Embeds the decoy payload in the 0th bit plane and the secret payload in the 1st bit plane of the image.
 
-### Payload format
-Binary payload layout for reliable extraction:
-- MAGIC: 4 bytes `0x53 0x54 0x45 0x47` (`STEG`)
-- VERSION: 1 byte (currently `0x01`)
-- LENGTH: 4 bytes unsigned big-endian ciphertext length
-- SALT_LEN: 1 byte salt length (fixed 16 bytes)
-- IV_LEN: 1 byte IV length (fixed 12 bytes)
-- SALT: variable bytes for PBKDF2 salt
-- IV: variable bytes for AES-GCM IV
-- CIPHERTEXT: variable bytes of encrypted UTF-8 text
+### Capacity Math
+- **Image LSB**: `Capacity (bytes) = floor(((width * height * 3) - 312 bits) / 8)`
+- **Image DCT**: `Capacity (bytes) = floor(((floor(width/8) * floor(height/8) * 2) - 312 bits) / 8)`
+- **Audio LSB**: 1 bit per audio sample.
 
-### Capacity math
-- Each pixel provides 3 bits of embedding capacity (R, G, B channels)
-- Total capacity bits = pixelCount * 3
-- Total capacity bytes = floor(totalBits / 8)
-- Required payload size = header + salt + iv + ciphertext
-- If the selected image is too small, the app fails gracefully with `IMAGE_TOO_SMALL`
+## Development Phases
 
-### Supported formats
-- Input: PNG, BMP, GIF, WEBP, JPEG for image loading
-- Output: PNG only
-- Warning: JPEG recompression or editing can destroy hidden data; output must be downloaded as PNG
-
-### Error codes and friendly UI messages
-- `NO_PAYLOAD`: no hidden payload found in image
-- `WRONG_PASSWORD`: decryption failed due to invalid password or tampered payload
-- `IMAGE_TOO_SMALL`: image capacity insufficient for payload
-- `DECODE_FAILED`: extraction failed due to invalid or corrupted payload
-- `UNSUPPORTED_FORMAT`: unsupported image format or invalid file type
-- `UNKNOWN`: any unexpected error
-
-### UX expectations
-- Clean responsive layout with a landing page and tool tabs for Hide / Reveal
-- Optional Supabase email/password authentication, but core Hide/Reveal works in guest mode
-- Clear status/alerts, loading states, accessible labels, keyboard-friendly controls
-- PNG-only guidance and capacity feedback
-
-## Deployment
-
-- **Frontend**: Deploy `frontend/` to Vercel or similar.
-- **Build locally**:
-  - `cd frontend`
-  - `npm install`
-  - `npm run build`
-  - `npm run dev` to preview locally
-- **Backend**: Java code is for reference only; no server deployment needed.
-  - Optional compile check: `javac backend/java/com/stegotext/CryptoEngine.java`
-
-## Phase plan
-- Phase 1: scaffold UI with skeleton pages and tabs ✅
-  - Built the main layout, landing page, auth page, and tool page structure.
-  - Added a tabbed Hide/Reveal interface and shared header/status UI.
-- Phase 2: optional Supabase auth with guest mode ✅
-  - Added optional email/password login and registration flows.
-  - Guest mode remains available when Supabase env vars are unset.
-- Phase 3: browser crypto encrypt/decrypt module ✅
-  - Implemented Web Crypto API encryption with PBKDF2-HMAC-SHA256 and AES-GCM.
-  - Packaged payloads with versioned header, salt, IV, and ciphertext.
-- Phase 4: stego embed/extract module ✅
-  - Developed Canvas-based LSB embedding into RGB pixel data.
-  - Added extraction logic with payload validation and capacity handling.
-- Phase 5: end-to-end wiring of Hide and Reveal flows ✅
-  - Connected UI forms to crypto and stego modules.
-  - Embedded encrypted data into PNG and enabled secret extraction/decryption.
-- Phase 6: UX polish, accessibility, and error handling ✅
-  - Improved status alerts, form validation, and optional password behavior.
-  - Added image info feedback and more helpful error messages.
-- Phase 7: build readiness, README, and deployment notes ✅
-  - Verified production build, updated README, and documented deployment steps.
-
-## Phase details
-### Phase 1 — UI scaffold
+### Phase 1 — UI Scaffold
 - Created the `frontend/` app shell with basic page routes.
 - Implemented the Hide / Reveal tool page and responsive layout.
-- Established the visual structure and baseline navigation.
+- Established the visual structure, dark mode, and baseline navigation.
 
 ### Phase 2 — Authentication
 - Added optional Supabase auth integration in the frontend.
 - Built login form, auth state handling, and guest path behavior.
-- Ensured the core tool still works without auth configuration.
+- Ensured the core tool still works perfectly without auth configuration.
 
-### Phase 3 — Crypto module
+### Phase 3 — Crypto Module
 - Implemented browser-side encryption in `frontend/lib/crypto.ts`.
-- Used PBKDF2 for key derivation and AES-GCM for authenticated encryption.
-- Standardized the stego payload format for compatibility and safety.
+- Standardized the binary payload format with versioning, salt, IV, and ciphertext.
 
-### Phase 4 — Stego module
-- Implemented `frontend/lib/stego.ts` for embed and extract workflows.
+### Phase 4 — Core Stego Module
+- Implemented `frontend/lib/stego.ts` for spatial LSB embed and extract workflows.
 - Used the Canvas API to read and modify image pixels securely.
-- Calculated payload capacity and enforced image size limits.
+- Handled payload capacity calculations and image size limits.
 
-### Phase 5 — End-to-end flow
+### Phase 5 — End-to-End Flow
 - Wired the Hide form to encrypt text and generate a downloadable PNG.
 - Wired the Reveal form to decode, decrypt, and display hidden text.
 - Managed file inputs, status updates, and browser download behavior.
 
-### Phase 6 — UX and polish
-- Added loading/feedback states and success/error alerts.
-- Allowed optional password use and clarified validation rules.
-- Provided image metadata so users understand capacity and file details.
+### Phase 6 — UX and Polish
+- Added loading/feedback states, success/error alerts, and form validation.
+- Provided image metadata so users understand capacity limits.
+- Implemented global navigation, including Home buttons across the interface.
 
-### Phase 7 — Final readiness
-- Verified frontend build success with `npm run build`.
-- Confirmed Java reference source compiles with `javac`.
-- Updated README with deployment notes and build instructions.
+### Phase 7 — Advanced Stego Algorithms (DCT & Audio)
+- Engineered a robust Randomized DCT embedding algorithm for images, enhancing resistance to steganalysis.
+- Extended the platform to support `.wav` audio files (`stego-audio.ts`), enabling audio steganography.
 
-## Supabase optional authentication
+### Phase 8 — Security Extensions (Plausible Deniability)
+- Developed the dual-plane embedding system to support Plausible Deniability.
+- Updated the UI to allow for decoy messages and decoy passwords seamlessly alongside the primary secret.
 
-To enable optional auth, configure the following environment variables in `frontend/.env.local`:
+### Phase 9 — Steganalysis Toolkit
+- Built a client-side LSB mask visualization tool.
+- Allowed users to analyze suspicious images for characteristic steganographic noise directly in the browser.
 
-- `NEXT_PUBLIC_SUPABASE_URL=https://dtekrwmtqclvvaplbvvz.supabase.co`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY=<your anon key>`
+### Phase 10 — Cloud Integration (Secure Sharing & Self-Destruction)
+- Integrated Supabase storage for generating shareable links.
+- Implemented a "Burn-After-Reading" feature where the file deletes itself from the server upon the first extraction request.
 
-A sample file is available at `frontend/.env.local.example`.
+## Getting Started
 
-Do not commit `frontend/.env.local`; it is already ignored by `.gitignore`.
+### Local Development
+1. Navigate to the frontend directory: `cd frontend`
+2. Install dependencies: `npm install`
+3. Run the development server: `npm run dev`
+4. Open [http://localhost:3000](http://localhost:3000)
 
-Guest mode works even when these variables are not set, so the hide/reveal tool remains fully usable without login.
+### Supabase Optional Authentication & Storage
+To enable login features and secure sharing, create a `.env.local` file in the `frontend/` directory (use `.env.local.example` as a template):
 
-## Java crypto module
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+*Note: Guest mode and all local steganography features work perfectly without these variables.*
 
-The repository includes a Java crypto engine at `backend/java/com/stegotext/CryptoEngine.java`.
-- Implements PBKDF2-HMAC-SHA256 key derivation
-- Uses AES-GCM with a random 12-byte IV
-- Encodes payloads with a versioned header for reliable extraction
-
-This provides a Java source reference for the encryption/decryption layer while the UI remains React/Next.js.
-
-## Build readiness
-- Verified frontend production build with `cd frontend && npm run build`.
-- Verified backend Java reference compiles with `javac backend/java/com/stegotext/CryptoEngine.java`.
-
-## Browser crypto module
-
-The client-side crypto is implemented in `frontend/lib/crypto.ts` using Web Crypto API.
-- PBKDF2 with HMAC-SHA256 for key derivation
-- AES-GCM for authenticated encryption
-- Random salt and IV per operation
-- Versioned binary payload format matching the spec
+## Deployment
+- **Frontend**: Designed to be deployed on Vercel, Netlify, or any standard Next.js hosting environment. Just deploy the `frontend/` directory. `npm run build` generates the production bundle.
+- **Backend**: The Java code (`backend/java/com/stegotext/CryptoEngine.java`) is for reference and testing the cryptographic payload structure. It does not need to be deployed as a server.
