@@ -9,7 +9,7 @@ import { embedAudio, extractAudio, calculateAudioCapacity } from '../../lib/steg
 import { generateLsbMask } from '../../lib/analysis';
 import { uploadStego, downloadStego, authEnabled, deleteStego } from '../../lib/supabaseClient';
 
-const tabs = ['Hide', 'Reveal', 'Analyze'] as const;
+const tabs = ['🫣 Hide', '🔍 Reveal', '🔬 Analyze'] as const;
 type Tab = (typeof tabs)[number];
 
 type FileInfo = {
@@ -21,7 +21,7 @@ type FileInfo = {
 };
 
 export default function ToolPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('Hide');
+  const [activeTab, setActiveTab] = useState<Tab>('🫣 Hide');
   const [algorithm, setAlgorithm] = useState<Algorithm>('lsb');
   const [status, setStatus] = useState('');
   const [statusType, setStatusType] = useState<'info' | 'success' | 'error'>('info');
@@ -313,7 +313,7 @@ export default function ToolPage() {
       <main className="content-shell">
         <div className="tool-panel">
           <section className="tool-headline" style={{ marginBottom: '2rem' }}>
-            <span className="eyebrow">Advanced Steganography</span>
+            <span className="eyebrow">🛡️ Advanced Steganography Suite</span>
             <h1>Hide & reveal secret text</h1>
             <p>Choose a mode, follow the instructions, and work with PNG/WAV files entirely in the browser.</p>
           </section>
@@ -336,20 +336,20 @@ export default function ToolPage() {
           
           {/* Algorithm selector is now moved inside the form sections for better context */}
 
-          {activeTab === 'Hide' && (
+          {activeTab === '🫣 Hide' && (
             <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleHide(); }}>
               <div className="form-grid">
                 {/* Left Column: Configuration */}
                 <div className="form-section">
-                  <h3>1. Secret Configuration</h3>
+                  <h3>✍️ 1. Secret Configuration</h3>
                   
                   <label>
-                    Secret text to hide
+                    🤫 Secret text to hide
                     <textarea rows={6} value={hideText} onChange={(e) => setHideText(e.target.value)} disabled={loading} required placeholder="Enter your secret message here..."/>
                   </label>
 
                   <label>
-                    Master Password
+                    🔑 Master Password
                     <input type="password" value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" />
                   </label>
 
@@ -391,20 +391,20 @@ export default function ToolPage() {
 
                 {/* Right Column: Carrier & Actions */}
                 <div className="form-section">
-                  <h3>2. Carrier & Output</h3>
+                  <h3>📦 2. Carrier & Output</h3>
 
                   <div className="algorithm-selector" style={{ padding: '1rem', background: 'var(--surface)', borderRadius: '0.8rem', border: '1px solid var(--border)' }}>
                     <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: 0 }}>
-                      <strong>Steganography Algorithm</strong>
+                      <strong>⚙️ Steganography Algorithm</strong>
                       <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value as Algorithm)} disabled={loading || isDeniable}>
-                        <option value="lsb">Standard (Spatial LSB) - Best for Images & Audio</option>
-                        <option value="dct">Advanced (Randomized DCT) - Highest Stealth (Images only)</option>
+                        <option value="lsb">📊 Standard (Spatial LSB) — Best for Images & Audio</option>
+                        <option value="dct">🎯 Advanced (Randomized DCT) — Highest Stealth (Images only)</option>
                       </select>
                     </label>
                   </div>
 
                   <label>
-                    Cover file (Image or WAV)
+                    🖼️ Cover file (Image or WAV)
                     <input type="file" accept="image/*,audio/wav" onChange={(e) => handleHideFileChange(e.target.files?.[0] || null)} disabled={loading} required/>
                   </label>
 
@@ -417,21 +417,21 @@ export default function ToolPage() {
 
                   <div className="form-actions">
                     <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading}>
-                      {loading ? 'Processing...' : 'Encrypt and Download'}
+                      {loading ? '⏳ Processing...' : '🔐 Encrypt & Download'}
                     </button>
                   </div>
                   
                   {lastStegoBlob && authEnabled && (
                     <div style={{marginTop: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: '0.8rem', background: 'var(--surface)'}}>
-                      <h4 style={{ margin: '0 0 0.5rem 0' }}>Share Securely</h4>
+                      <h4 style={{ margin: '0 0 0.5rem 0' }}>🔗 Share Securely</h4>
                       <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
                           <input type="checkbox" checked={burnAfterReading} onChange={e => setBurnAfterReading(e.target.checked)} disabled={loading} />
-                          Burn after reading (Self-destruct)
+                          🔥 Burn after reading (Self-destruct)
                       </label>
                       {shareLink ? (
                         <input type="text" readOnly value={shareLink} onClick={e => (e.target as HTMLInputElement).select()} style={{marginTop: '0.5rem', fontSize: '0.8rem'}}/>
                       ) : (
-                        <button type="button" className="button secondary small" onClick={handleCreateShareLink} disabled={loading} style={{marginTop: '0.5rem', width: '100%'}}>Generate Share Link</button>
+                        <button type="button" className="button secondary small" onClick={handleCreateShareLink} disabled={loading} style={{marginTop: '0.5rem', width: '100%'}}>🔗 Generate Share Link</button>
                       )}
                     </div>
                   )}
@@ -440,36 +440,36 @@ export default function ToolPage() {
             </form>
           )}
 
-          {activeTab === 'Reveal' && (
+          {activeTab === '🔍 Reveal' && (
             <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleReveal(); }}>
               <div className="form-grid">
                 <div className="form-section">
-                  <h3>1. Carrier Input</h3>
+                  <h3>📂 1. Carrier Input</h3>
                   <label>
-                    Stego file (Image or WAV)
+                    🖼️ Stego file (Image or WAV)
                     <input type="file" accept="image/*,audio/wav" onChange={(e) => { setRevealFile(e.target.files?.[0] || null); setRevealedText(''); }} disabled={loading} required={!revealFile} />
                     {revealFile && <small>Ready to extract from: {revealFile.name}</small>}
                   </label>
                   <label>
-                    Password
+                    🔑 Password
                     <input type="password" placeholder="Required if hidden with a password or DCT" value={revealPassword} onChange={(e) => setRevealPassword(e.target.value)} disabled={loading} />
                   </label>
                   <div className="form-actions">
                     <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading || !revealFile}>
-                      {loading ? 'Extracting...' : 'Extract and Decrypt'}
+                      {loading ? '⏳ Extracting...' : '🔍 Extract & Decrypt'}
                     </button>
                   </div>
                 </div>
 
                 <div className="form-section">
-                  <h3>2. Extracted Content</h3>
+                  <h3>📄 2. Extracted Content</h3>
                   <label>
-                    {revealedText ? 'Hidden Message Found:' : 'No message extracted yet.'}
+                    {revealedText ? '✅ Hidden Message Found:' : '📭 No message extracted yet.'}
                     <textarea rows={10} value={revealedText} readOnly placeholder="The extracted message will appear here..." />
                   </label>
                   {revealedText && (
                     <button type="button" className="button secondary small" onClick={() => { navigator.clipboard.writeText(revealedText); setStatus('Copied to clipboard!'); setStatusType('success'); }}>
-                      Copy to Clipboard
+                      📋 Copy to Clipboard
                     </button>
                   )}
                 </div>
@@ -477,9 +477,9 @@ export default function ToolPage() {
             </form>
           )}
 
-          {activeTab === 'Analyze' && (
+          {activeTab === '🔬 Analyze' && (
             <div className="form-section">
-              <h3>LSB Plane Analysis</h3>
+              <h3>🔬 LSB Plane Analysis</h3>
               <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
                 Upload an image to view its Least Significant Bit (LSB) plane. If you see random "static" noise instead of a faint version of the image, it likely contains hidden data.
               </p>
@@ -491,7 +491,7 @@ export default function ToolPage() {
 
               {analyzeMaskUrl && (
                 <div style={{marginTop: '1.5rem', padding: '1rem', background: '#000', borderRadius: '0.8rem', textAlign: 'center'}}>
-                  <h4 style={{ color: '#fff', marginBottom: '1rem' }}>Visualized LSB Noise Map:</h4>
+                  <h4 style={{ color: '#fff', marginBottom: '1rem' }}>🔭 Visualized LSB Noise Map:</h4>
                   <img src={analyzeMaskUrl} alt="LSB Mask" style={{ maxWidth: '100%', border: '1px solid #333', borderRadius: '0.4rem' }} />
                   <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '1rem' }}>Static noise pattern (snow-like) confirms LSB steganography.</p>
                 </div>
