@@ -23,7 +23,7 @@ type FileInfo = {
 export default function ToolPage() {
   const [activeTab, setActiveTab] = useState<Tab>('Hide');
   const [algorithm, setAlgorithm] = useState<Algorithm>('lsb');
-  const [status, setStatus] = useState('Ready.');
+  const [status, setStatus] = useState('');
   const [statusType, setStatusType] = useState<'info' | 'success' | 'error'>('info');
   const [loading, setLoading] = useState(false);
   
@@ -326,7 +326,7 @@ export default function ToolPage() {
                 key={tab}
                 type="button"
                 className={activeTab === tab ? 'tab active' : 'tab'}
-                onClick={() => { setActiveTab(tab); setStatus('Ready.'); setStatusType('info'); }}
+                onClick={() => { setActiveTab(tab); setStatus(''); setStatusType('info'); }}
               >
                 {tab}
               </button>
