@@ -5,8 +5,10 @@ import Link from 'next/link';
 import Header from '../../components/Header';
 import { authEnabled, supabase } from '../../lib/supabaseClient';
 
+type AuthMode = 'guest' | 'signIn' | 'signUp';
+
 export default function LoginPage() {
-  const [mode, setMode] = useState<'guest' | 'signIn' | 'signUp'>('guest');
+  const [mode, setMode] = useState<AuthMode>(authEnabled ? 'signIn' : 'guest');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState(
@@ -68,21 +70,30 @@ export default function LoginPage() {
                 <button
                   type="button"
                   className={mode === 'guest' ? 'tab active' : 'tab'}
-                  onClick={() => setMode('guest')}
+                  onClick={() => {
+                    setMode('guest');
+                    setStatus('Continue as guest to hide and reveal messages.');
+                  }}
                 >
                   Guest
                 </button>
                 <button
                   type="button"
                   className={mode === 'signIn' ? 'tab active' : 'tab'}
-                  onClick={() => setMode('signIn')}
+                  onClick={() => {
+                    setMode('signIn');
+                    setStatus('Enter your email and password to sign in.');
+                  }}
                 >
                   Sign in
                 </button>
                 <button
                   type="button"
                   className={mode === 'signUp' ? 'tab active' : 'tab'}
-                  onClick={() => setMode('signUp')}
+                  onClick={() => {
+                    setMode('signUp');
+                    setStatus('Create an account by entering your email and password.');
+                  }}
                 >
                   Sign up
                 </button>
