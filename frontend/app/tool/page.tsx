@@ -353,16 +353,32 @@ export default function ToolPage() {
                     <input type="password" value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" />
                   </label>
 
-                  <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(123, 63, 97, 0.05)', borderRadius: '0.8rem', border: '1px dashed var(--border)' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold', cursor: 'pointer' }}>
-                        <input type="checkbox" checked={isDeniable} onChange={e => setIsDeniable(e.target.checked)} disabled={loading || (hideFileInfo?.isAudio ?? false) || algorithm === 'dct'} />
-                        Plausible Deniability (Decoy mode)
-                    </label>
+                  <div
+                    className={`deniable-toggle-card${isDeniable ? ' active' : ''}${(loading || (hideFileInfo?.isAudio ?? false) || algorithm === 'dct') ? ' disabled' : ''}`}
+                    onClick={() => {
+                      if (!loading && !(hideFileInfo?.isAudio ?? false) && algorithm !== 'dct') {
+                        setIsDeniable(!isDeniable);
+                      }
+                    }}
+                  >
+                    <div className="deniable-toggle-header">
+                      <div className="deniable-toggle-icon">{isDeniable ? '🕵️' : '🔒'}</div>
+                      <div className="deniable-toggle-info">
+                        <span className="deniable-toggle-title">Plausible Deniability</span>
+                        <span className="deniable-toggle-desc">
+                          {isDeniable ? 'Active — two passwords, two messages.' : 'Hide a decoy message alongside your real secret.'}
+                        </span>
+                      </div>
+                      <div className={`deniable-pill${isDeniable ? ' on' : ''}`}>
+                        <div className="deniable-pill-knob" />
+                      </div>
+                    </div>
+
                     {isDeniable && (
-                      <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <div className="deniable-fields" onClick={e => e.stopPropagation()}>
                         <label>
-                          Decoy Text (Visible with decoy password)
-                          <textarea rows={3} value={decoyText} onChange={(e) => setDecoyText(e.target.value)} disabled={loading} required placeholder="Enter a harmless message..."/>
+                          Decoy Text <span style={{ fontWeight: 400, color: 'var(--muted)', fontSize: '0.85rem' }}>(visible with decoy password)</span>
+                          <textarea rows={3} value={decoyText} onChange={(e) => setDecoyText(e.target.value)} disabled={loading} required placeholder="Enter a harmless message someone can see..."/>
                         </label>
                         <label>
                           Decoy Password

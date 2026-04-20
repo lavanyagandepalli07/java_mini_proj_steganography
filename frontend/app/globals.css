@@ -290,6 +290,109 @@ button {
   color: var(--accent-strong);
 }
 
+/* ── Plausible Deniability Toggle Card ── */
+.deniable-toggle-card {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+  user-select: none;
+}
+
+.deniable-toggle-card:hover:not(.disabled) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(123, 63, 97, 0.1);
+}
+
+.deniable-toggle-card.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.deniable-toggle-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.deniable-toggle-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.deniable-toggle-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+
+.deniable-toggle-card.active .deniable-toggle-icon {
+  transform: scale(1.15);
+}
+
+.deniable-toggle-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.deniable-toggle-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.deniable-toggle-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Pill toggle */
+.deniable-pill {
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--border);
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.25s;
+}
+
+.deniable-pill.on {
+  background: var(--accent);
+}
+
+.deniable-pill-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: transform 0.25s;
+}
+
+.deniable-pill.on .deniable-pill-knob {
+  transform: translateX(20px);
+}
+
+.deniable-fields {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  cursor: default;
+}
+
+
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
