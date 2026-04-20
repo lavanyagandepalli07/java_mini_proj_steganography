@@ -99,9 +99,12 @@ export default function LoginPage() {
               >
                 ✨ Create Account
               </button>
-              <div style={{ textAlign: 'center', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+              <div style={{ textAlign: 'center', borderTop: '1px solid var(--border)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <Link href="/tool" className="nav-link" style={{ fontSize: '0.9rem' }}>
                   👤 Continue as Guest →
+                </Link>
+                <Link href="/" className="nav-link" style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
+                  🏠 Back to Landing Page
                 </Link>
               </div>
             </div>
