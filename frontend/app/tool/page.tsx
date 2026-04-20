@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Header from '../../components/Header';
 import StatusAlert from '../../components/StatusAlert';
 import { encrypt, decrypt } from '../../lib/crypto';
-import { embed, extract, calculateCapacity } from '../../lib/stego';
+import { embed, extract, calculateCapacity, Algorithm } from '../../lib/stego';
 
 const tabs = ['Hide', 'Reveal'] as const;
 
@@ -14,18 +14,20 @@ type ImageInfo = {
   name: string;
   width: number;
   height: number;
-  capacity: number;
 };
 
 export default function ToolPage() {
   const [activeTab, setActiveTab] = useState<Tab>('Hide');
+  const [algorithm, setAlgorithm] = useState<Algorithm>('lsb');
   const [status, setStatus] = useState('Ready to hide or reveal a message.');
   const [statusType, setStatusType] = useState<'info' | 'success' | 'error'>('info');
   const [loading, setLoading] = useState(false);
+  
   const [hideText, setHideText] = useState('');
   const [hidePassword, setHidePassword] = useState('');
   const [hideImage, setHideImage] = useState<File | null>(null);
   const [hideImageInfo, setHideImageInfo] = useState<ImageInfo | null>(null);
+  
   const [revealImage, setRevealImage] = useState<File | null>(null);
   const [revealPassword, setRevealPassword] = useState('');
   const [revealedText, setRevealedText] = useState('');
@@ -36,9 +38,8 @@ export default function ToolPage() {
       const objectUrl = URL.createObjectURL(file);
 
       img.onload = () => {
-        const capacity = calculateCapacity(img.width, img.height);
         URL.revokeObjectURL(objectUrl);
-        resolve({ name: file.name, width: img.width, height: img.height, capacity });
+        resolve({ name: file.name, width: img.width, height: img.height });
       };
 
       img.onerror = () => {
@@ -66,7 +67,7 @@ export default function ToolPage() {
     try {
       const info = await loadImageInfo(file);
       setHideImageInfo(info);
-      setStatus(`Cover image loaded: ${info.width}×${info.height}px, capacity ${info.capacity} bytes.`);
+      setStatus(`Cover image loaded: ${info.width}×${info.height}px.`);
     } catch (error) {
       setStatus(`Error: ${error instanceof Error ? error.message : 'Unable to load image.'}`);
       setStatusType('error');
@@ -89,6 +90,12 @@ export default function ToolPage() {
       return;
     }
 
+    if (algorithm === 'dct' && !hidePassword) {
+      setStatus('Password is required for Advanced (DCT) mode.');
+      setStatusType('error');
+      return;
+    }
+
     setLoading(true);
     setStatus('Encrypting and embedding...');
     setStatusType('info');
@@ -99,7 +106,7 @@ export default function ToolPage() {
         throw new Error(encrypted.error);
       }
 
-      const result = await embed(hideImage, encrypted.payload);
+      const result = await embed(hideImage, encrypted.payload, algorithm, hidePassword);
       if (!result.success) {
         throw new Error(result.error);
       }
@@ -128,12 +135,18 @@ export default function ToolPage() {
       return;
     }
 
+    if (algorithm === 'dct' && !revealPassword) {
+      setStatus('Password is required for Advanced (DCT) mode.');
+      setStatusType('error');
+      return;
+    }
+
     setLoading(true);
     setStatus('Extracting and decrypting...');
     setStatusType('info');
 
     try {
-      const result = await extract(revealImage);
+      const result = await extract(revealImage, algorithm, revealPassword);
       if (!result.success) {
         const message = result.error === 'NO_PAYLOAD' ? 'No hidden data found in image.' : 'Failed to extract hidden data.';
         throw new Error(message);
@@ -183,6 +196,26 @@ export default function ToolPage() {
 
         <div className="tool-panel">
           <StatusAlert message={status} loading={loading} variant={statusType} />
+          
+          <div className="algorithm-selector" style={{ marginBottom: '1.5rem', padding: '1rem', background: 'var(--gray-900)', borderRadius: 'var(--radius)' }}>
+            <label style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: 0 }}>
+              <strong>Algorithm:</strong>
+              <select 
+                value={algorithm} 
+                onChange={(e) => setAlgorithm(e.target.value as Algorithm)}
+                disabled={loading}
+                style={{ flex: 1 }}
+              >
+                <option value="lsb">Standard (Spatial LSB) - High Capacity</option>
+                <option value="dct">Advanced (Randomized DCT) - High Security</option>
+              </select>
+            </label>
+            {algorithm === 'dct' && (
+              <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--gray-400)' }}>
+                Advanced mode scatters data in the frequency domain. It is highly secure but has much lower capacity. <strong style={{color: 'var(--red-500)'}}>A password is required.</strong>
+              </p>
+            )}
+          </div>
 
           {activeTab === 'Hide' ? (
             <form className="panel-form" onSubmit={(event) => { event.preventDefault(); handleHide(); }}>
@@ -198,16 +231,17 @@ export default function ToolPage() {
                 />
               </label>
               <label>
-                Password
+                Password {algorithm === 'dct' && <span style={{ color: 'var(--red-500)' }}>*</span>}
                 <input
                   type="password"
-                  placeholder="Optional password"
+                  placeholder={algorithm === 'dct' ? "Required for DCT mode" : "Optional password"}
                   aria-label="Password"
                   value={hidePassword}
                   onChange={(e) => setHidePassword(e.target.value)}
                   disabled={loading}
+                  required={algorithm === 'dct'}
                 />
-                <small>Leave blank to embed without a password.</small>
+                <small>{algorithm === 'dct' ? 'Required to securely scatter the payload.' : 'Leave blank to embed without a password.'}</small>
               </label>
               <label>
                 Cover image
@@ -223,11 +257,11 @@ export default function ToolPage() {
                 <div className="image-summary">
                   <p><strong>{hideImageInfo.name}</strong></p>
                   <p>{hideImageInfo.width} × {hideImageInfo.height} px</p>
-                  <p>Estimated payload capacity: {hideImageInfo.capacity} bytes</p>
+                  <p>Estimated payload capacity: {calculateCapacity(hideImageInfo.width, hideImageInfo.height, algorithm)} bytes</p>
                 </div>
               )}
               <div className="form-actions">
-                <button type="submit" className="button primary" disabled={loading || !hideImage || !hideText.trim()}>
+                <button type="submit" className="button primary" disabled={loading || !hideImage || !hideText.trim() || (algorithm === 'dct' && !hidePassword)}>
                   Encrypt and download PNG
                 </button>
               </div>
@@ -245,16 +279,17 @@ export default function ToolPage() {
                 />
               </label>
               <label>
-                Password
+                Password {algorithm === 'dct' && <span style={{ color: 'var(--red-500)' }}>*</span>}
                 <input
                   type="password"
-                  placeholder="Password used during hiding"
+                  placeholder={algorithm === 'dct' ? "Required for DCT mode" : "Password used during hiding"}
                   aria-label="Password"
                   value={revealPassword}
                   onChange={(e) => setRevealPassword(e.target.value)}
                   disabled={loading}
+                  required={algorithm === 'dct'}
                 />
-                <small>Leave blank if the message was hidden without a password.</small>
+                <small>{algorithm === 'dct' ? 'Required to locate the scattered payload.' : 'Leave blank if the message was hidden without a password.'}</small>
               </label>
               {revealedText && (
                 <label>
@@ -263,7 +298,7 @@ export default function ToolPage() {
                 </label>
               )}
               <div className="form-actions">
-                <button type="submit" className="button primary" disabled={loading || !revealImage}>
+                <button type="submit" className="button primary" disabled={loading || !revealImage || (algorithm === 'dct' && !revealPassword)}>
                   Extract and decrypt text
                 </button>
               </div>
