@@ -90,9 +90,6 @@ export default function Header() {
       </div>
 
       <nav className="site-nav">
-        <Link href="/tool" className="nav-link">
-          Tool
-        </Link>
         <Link href="/login" className="nav-link">
           {authEnabled ? 'Sign in' : 'Login info'}
         </Link>
