@@ -47,7 +47,7 @@ async function loadImage(file: File): Promise<ImageData> {
   });
 }
 
-function embedBitsLSB(imageData: ImageData, payload: Uint8Array): boolean {
+function embedBitsLSB(imageData: ImageData, payload: Uint8Array, bitPlane: number = 0): boolean {
   const { data, width, height } = imageData;
   const totalPixels = width * height;
   const bitsNeeded = payload.length * 8;
@@ -56,27 +56,28 @@ function embedBitsLSB(imageData: ImageData, payload: Uint8Array): boolean {
     return false;
   }
 
+  const mask = ~(1 << bitPlane);
   let bitIndex = 0;
   for (let i = 0; i < data.length && bitIndex < bitsNeeded; i += 4) {
     for (let channel = 0; channel < 3 && bitIndex < bitsNeeded; channel++) {
       const byteIndex = Math.floor(bitIndex / 8);
       const bitOffset = bitIndex % 8;
       const bit = (payload[byteIndex] >> (7 - bitOffset)) & 1;
-      data[i + channel] = (data[i + channel] & 0xFE) | bit;
+      data[i + channel] = (data[i + channel] & mask) | (bit << bitPlane);
       bitIndex++;
     }
   }
   return true;
 }
 
-function extractBitsLSB(imageData: ImageData, bitLength: number): Uint8Array | null {
+function extractBitsLSB(imageData: ImageData, bitLength: number, bitPlane: number = 0): Uint8Array | null {
   const { data } = imageData;
   const payload = new Uint8Array(Math.ceil(bitLength / 8));
   let bitIndex = 0;
 
   for (let i = 0; i < data.length && bitIndex < bitLength; i += 4) {
     for (let channel = 0; channel < 3 && bitIndex < bitLength; channel++) {
-      const bit = data[i + channel] & 1;
+      const bit = (data[i + channel] >> bitPlane) & 1;
       const byteIndex = Math.floor(bitIndex / 8);
       const bitOffset = 7 - (bitIndex % 8);
       payload[byteIndex] = (payload[byteIndex] & ~(1 << bitOffset)) | (bit << bitOffset);
@@ -306,6 +307,40 @@ function extractBitsDCT(imageData: ImageData, bitLength: number, password?: stri
   return payload;
 }
 
+// --- Deniable Embedding ---
+
+export async function embedDeniable(imageFile: File, decoyPayload: Uint8Array, secretPayload: Uint8Array): Promise<StegoResult> {
+  try {
+    const imageData = await loadImage(imageFile);
+    const capacity = calculateCapacity(imageData.width, imageData.height, 'lsb');
+
+    if (decoyPayload.length > capacity || secretPayload.length > capacity) {
+      return { success: false, error: `Payload too large for deniable mode.` };
+    }
+
+    // Embed decoy in plane 0 and secret in plane 1
+    if (!embedBitsLSB(imageData, decoyPayload, 0) || !embedBitsLSB(imageData, secretPayload, 1)) {
+      return { success: false, error: 'Embedding failed.' };
+    }
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return { success: false, error: 'Canvas context not available' };
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
+    ctx.putImageData(imageData, 0, 0);
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve({ success: true, data: blob });
+        else resolve({ success: false, error: 'Failed to create PNG blob' });
+      }, 'image/png');
+    });
+  } catch (error) {
+    return { success: false, error: `Deniable embedding failed: ${error instanceof Error ? error.message : 'Unknown error'}` };
+  }
+}
+
 // --- Main Entrypoints ---
 
 export async function embed(imageFile: File, payload: Uint8Array, algorithm: Algorithm = 'lsb', password?: string): Promise<StegoResult> {
@@ -359,7 +394,16 @@ export async function extract(imageFile: File, algorithm: Algorithm = 'lsb', pas
     
     let headerData: Uint8Array | null = null;
     if (algorithm === 'lsb') {
-      headerData = extractBitsLSB(imageData, headerBits);
+      // Try bit plane 0 first, then 1 (for plausible deniability)
+      headerData = extractBitsLSB(imageData, headerBits, 0);
+      if (headerData && (headerData[0] !== MAGIC[0] || headerData[1] !== MAGIC[1])) {
+          const plane1Header = extractBitsLSB(imageData, headerBits, 1);
+          if (plane1Header && plane1Header[0] === MAGIC[0] && plane1Header[1] === MAGIC[1]) {
+              headerData = plane1Header;
+              // We'll need to remember we switched planes if we want to extract the full payload.
+              // But currently extractBitsLSB is called again below.
+          }
+      }
     } else {
       headerData = extractBitsDCT(imageData, headerBits, password);
     }
@@ -387,7 +431,10 @@ export async function extract(imageFile: File, algorithm: Algorithm = 'lsb', pas
     
     let payload: Uint8Array | null = null;
     if (algorithm === 'lsb') {
-      payload = extractBitsLSB(imageData, totalPayloadBits);
+      // Re-check which plane has the magic header
+      const h0 = extractBitsLSB(imageData, headerBits, 0);
+      const plane = (h0 && h0[0] === MAGIC[0] && h0[1] === MAGIC[1]) ? 0 : 1;
+      payload = extractBitsLSB(imageData, totalPayloadBits, plane);
     } else {
       payload = extractBitsDCT(imageData, totalPayloadBits, password);
     }
