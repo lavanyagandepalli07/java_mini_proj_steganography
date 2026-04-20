@@ -51,15 +51,23 @@ export default function ToolPage() {
   const [analyzeMaskUrl, setAnalyzeMaskUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for share link on mount
+    // Check for share link and tab routing on mount
     const searchParams = new URLSearchParams(window.location.search);
     const shareId = searchParams.get('share');
     const ext = searchParams.get('ext') || 'png';
     const burn = searchParams.get('burn') === 'true';
-    
+    const tabParam = searchParams.get('tab');
+
     if (shareId) {
-      setActiveTab('Reveal');
+      setActiveTab('🔍 Reveal');
       loadSharedFile(shareId, ext, burn);
+    } else if (tabParam) {
+      const tabMap: Record<string, Tab> = {
+        hide: '🫣 Hide',
+        reveal: '🔍 Reveal',
+        analyze: '🔬 Analyze',
+      };
+      if (tabMap[tabParam]) setActiveTab(tabMap[tabParam]);
     }
   }, []);
 
