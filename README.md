@@ -1,4 +1,4 @@
-# StegoText
+\# StegoText
 
 A simple client-side steganography web app built in Next.js.
 
@@ -128,10 +128,14 @@ Binary payload layout for reliable extraction:
 
 ## Supabase optional authentication
 
-To enable optional auth, configure the following environment variables in `.env.local`:
+To enable optional auth, configure the following environment variables in `frontend/.env.local`:
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SUPABASE_URL=https://dtekrwmtqclvvaplbvvz.supabase.co`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY=<your anon key>`
+
+A sample file is available at `frontend/.env.local.example`.
+
+Do not commit `frontend/.env.local`; it is already ignored by `.gitignore`.
 
 Guest mode works even when these variables are not set, so the hide/reveal tool remains fully usable without login.
 
