@@ -91,7 +91,7 @@ export default function Header() {
 
       <nav className="site-nav">
         <Link href="/" className="nav-link">
-          🏠 Home
+          Home
         </Link>
         <Link href="/login" className="nav-link">
           {authEnabled ? 'Sign in' : 'Login info'}
