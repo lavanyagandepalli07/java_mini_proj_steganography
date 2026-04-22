@@ -22,6 +22,20 @@ type FileInfo = {
 
 export default function ToolPage() {
   const [activeTab, setActiveTab] = useState<Tab>('🫣 Hide');
+
+  const getTabMetadata = (tab: Tab) => {
+    switch (tab) {
+      case '🫣 Hide':
+        return { title: 'Hide Secret Data', desc: 'Securely encrypt and embed messages into images or audio files.', eyebrow: '🛡️ Protection Mode', theme: 'hide' };
+      case '🔍 Reveal':
+        return { title: 'Reveal Hidden Text', desc: 'Extract and decrypt hidden messages from stego carriers.', eyebrow: '🔍 Discovery Mode', theme: 'reveal' };
+      case '🔬 Analyze':
+        return { title: 'Forensic Analysis', desc: 'Visualize the LSB plane to detect if an image contains hidden data.', eyebrow: '🔬 Lab Mode', theme: 'analyze' };
+    }
+  };
+
+  const metadata = getTabMetadata(activeTab);
+
   const [algorithm, setAlgorithm] = useState<Algorithm>('lsb');
   const [status, setStatus] = useState('');
   const [statusType, setStatusType] = useState<'info' | 'success' | 'error'>('info');
@@ -319,11 +333,11 @@ export default function ToolPage() {
     <div className="app-shell">
       <Header />
       <main className="content-shell">
-        <div className="tool-panel">
-          <section className="tool-headline" style={{ marginBottom: '2rem' }}>
-            <span className="eyebrow">🛡️ Advanced Steganography Suite</span>
-            <h1>Hide & reveal secret text</h1>
-            <p>Choose a mode, follow the instructions, and work with PNG/WAV files entirely in the browser.</p>
+        <div className={`tool-panel mode-${metadata.theme}`}>
+          <section className="tool-headline" style={{ marginBottom: '2rem' }} key={activeTab}>
+            <span className="eyebrow animate-in">{metadata.eyebrow}</span>
+            <h1 className="animate-in" style={{ animationDelay: '0.05s' }}>{metadata.title}</h1>
+            <p className="animate-in" style={{ animationDelay: '0.1s' }}>{metadata.desc}</p>
           </section>
 
           <StatusAlert message={status} loading={loading} variant={statusType} />

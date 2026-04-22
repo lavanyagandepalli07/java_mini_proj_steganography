@@ -491,3 +491,57 @@ button {
     justify-content: space-between;
   }
 }
+
+/* ── Custom Tab Modes (Orientation) ── */
+.tool-panel {
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Hide Mode (Default) */
+.tool-panel.mode-hide {
+  --accent: #7b3f61;
+  --accent-soft: #f8eef4;
+  --accent-strong: #5a2a45;
+  border-top: 4px solid var(--accent);
+}
+
+/* Reveal Mode */
+.tool-panel.mode-reveal {
+  --accent: #3f5a7b;
+  --accent-soft: #edf4f8;
+  --accent-strong: #2a3d5a;
+  border-top: 4px solid var(--accent);
+}
+
+/* Analyze Mode */
+.tool-panel.mode-analyze {
+  --accent: #3f7b6d;
+  --accent-soft: #eef8f5;
+  --accent-strong: #2a5a4d;
+  border-top: 4px solid var(--accent);
+}
+
+/* Animations */
+.animate-in {
+  animation: modeFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tool-headline h1 {
+  transition: color 0.3s ease;
+}
+
+.tool-headline p {
+  max-width: 600px;
+  font-size: 1.05rem;
+}
