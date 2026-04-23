@@ -309,7 +309,7 @@ button {
 
 .deniable-toggle-card.active {
   border-color: var(--accent);
-  background: var(--accent-soft);
+  background: var(--surface-muted);
 }
 
 .deniable-toggle-card.disabled {
@@ -469,15 +469,20 @@ button {
 }
 
 .status-alert.status-alert--success {
-  background: rgba(185, 147, 166, 0.18);
+  background: rgba(185, 147, 166, 0.15);
   color: var(--accent-strong);
-  border-color: rgba(123, 63, 97, 0.35);
+  border-color: var(--accent);
 }
 
 .status-alert.status-alert--error {
-  background: rgba(191, 105, 118, 0.2);
+  background: rgba(191, 105, 118, 0.15);
   color: #7b2c3f;
-  border-color: rgba(123, 63, 97, 0.35);
+  border-color: #7b2c3f;
+}
+
+[data-theme='dark'] .status-alert.status-alert--error {
+  color: #ff9999;
+  border-color: #ff9999;
 }
 
 @media (max-width: 720px) {
@@ -505,6 +510,12 @@ button {
   border-top: 4px solid var(--accent);
 }
 
+[data-theme='dark'] .tool-panel.mode-hide {
+  --accent: #c679a8;
+  --accent-soft: #3a2a35;
+  --accent-strong: #f7d8e1;
+}
+
 /* Reveal Mode */
 .tool-panel.mode-reveal {
   --accent: #3f5a7b;
@@ -513,12 +524,24 @@ button {
   border-top: 4px solid var(--accent);
 }
 
+[data-theme='dark'] .tool-panel.mode-reveal {
+  --accent: #79a8c6;
+  --accent-soft: #2a353a;
+  --accent-strong: #d8e1f7;
+}
+
 /* Analyze Mode */
 .tool-panel.mode-analyze {
   --accent: #3f7b6d;
   --accent-soft: #eef8f5;
   --accent-strong: #2a5a4d;
   border-top: 4px solid var(--accent);
+}
+
+[data-theme='dark'] .tool-panel.mode-analyze {
+  --accent: #79c6a8;
+  --accent-soft: #2a3a35;
+  --accent-strong: #d8f7e1;
 }
 
 /* Animations */

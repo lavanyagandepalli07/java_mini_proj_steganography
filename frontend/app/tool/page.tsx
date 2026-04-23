@@ -512,10 +512,10 @@ export default function ToolPage() {
               </label>
 
               {analyzeMaskUrl && (
-                <div style={{marginTop: '1.5rem', padding: '1rem', background: '#000', borderRadius: '0.8rem', textAlign: 'center'}}>
-                  <h4 style={{ color: '#fff', marginBottom: '1rem' }}>🔭 Visualized LSB Noise Map:</h4>
-                  <img src={analyzeMaskUrl} alt="LSB Mask" style={{ maxWidth: '100%', border: '1px solid #333', borderRadius: '0.4rem' }} />
-                  <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '1rem' }}>Static noise pattern (snow-like) confirms LSB steganography.</p>
+                <div className="analysis-result-container" style={{marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: '0.8rem', textAlign: 'center', border: '1px solid var(--border)'}}>
+                  <h4 style={{ color: 'var(--accent-strong)', marginBottom: '1rem' }}>🔭 Visualized LSB Noise Map:</h4>
+                  <img src={analyzeMaskUrl} alt="LSB Mask" style={{ maxWidth: '100%', border: '1px solid var(--border)', borderRadius: '0.4rem' }} />
+                  <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginTop: '1rem' }}>Static noise pattern (snow-like) confirms LSB steganography.</p>
                 </div>
               )}
             </div>
