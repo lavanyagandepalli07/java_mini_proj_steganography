@@ -9,7 +9,7 @@ import { generateLsbMask } from '../../lib/analysis';
 import { uploadStego, downloadStego, authEnabled, deleteStego } from '../../lib/supabaseClient';
 import PasswordStrength from '../../components/PasswordStrength';
 
-const tabs = ['🫣 Hide', '🔍 Reveal', '🔬 Analyze'] as const;
+const tabs = ['[H] HIDE', '[R] REVEAL', '[A] ANALYZE'] as const;
 type Tab = (typeof tabs)[number];
 
 type FileInfo = {
@@ -38,16 +38,16 @@ function TypewriterEffect({ text }: { text: string }) {
 }
 
 export default function ToolPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('🫣 Hide');
+  const [activeTab, setActiveTab] = useState<Tab>('[H] HIDE');
 
   const getTabMetadata = (tab: Tab) => {
     switch (tab) {
-      case '🫣 Hide':
-        return { title: 'Hide Secret Data', desc: 'Securely encrypt and embed messages into images or audio files.', eyebrow: '🛡️ Protection Mode', theme: 'hide' };
-      case '🔍 Reveal':
-        return { title: 'Reveal Hidden Text', desc: 'Extract and decrypt hidden messages from stego carriers.', eyebrow: '🔍 Discovery Mode', theme: 'reveal' };
-      case '🔬 Analyze':
-        return { title: 'Forensic Analysis', desc: 'Visualize the LSB plane to detect if an image contains hidden data.', eyebrow: '🔬 Lab Mode', theme: 'analyze' };
+      case '[H] HIDE':
+        return { title: 'ENCRYPT & EMBED', desc: 'Securely inject payloads into lossless carriers.', eyebrow: ':: SHADOW_PROTOCOL', theme: 'hide' };
+      case '[R] REVEAL':
+        return { title: 'EXTRACT & DECRYPT', desc: 'Recover hidden data strings from stego-objects.', eyebrow: ':: SIGNAL_SCAN', theme: 'reveal' };
+      case '[A] ANALYZE':
+        return { title: 'FORENSIC ANALYSIS', desc: 'Identify steganographic anomalies in the L0 noise plane.', eyebrow: ':: SPECTRAL_VISION', theme: 'analyze' };
     }
   };
 
