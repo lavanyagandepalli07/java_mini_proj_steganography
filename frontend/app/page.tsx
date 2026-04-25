@@ -6,16 +6,16 @@ export default function Home() {
     <div className="app-shell">
       <Header />
       <main className="content-shell">
-        <section className="hero-luxury">
+        <section className="hero-luxury" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div className="hero-content">
             <span className="eyebrow animate-in">🕵️ The Art of Invisible Communication</span>
             <h1 className="animate-in" style={{ animationDelay: '0.1s' }}>
               <span className="gradient-text">Hide Secret Data</span> Inside Ordinary Images.
             </h1>
-            <p className="animate-in" style={{ animationDelay: '0.2s', fontSize: '1.2rem', maxWidth: '600px' }}>
+            <p className="animate-in" style={{ animationDelay: '0.2s', fontSize: '1.2rem', maxWidth: '700px', margin: '0 auto 2rem' }}>
               StegoText leverages advanced spatial and frequency-domain steganography to embed your messages into PNG and WAV files—entirely in your browser.
             </p>
-            <div className="hero-actions animate-in" style={{ animationDelay: '0.3s' }}>
+            <div className="hero-actions animate-in" style={{ animationDelay: '0.3s', justifyContent: 'center' }}>
               <Link href="/tool?tab=hide" className="button primary">
                 🚀 Start Protecting
               </Link>
@@ -24,14 +24,8 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          
-          <div className="hero-visual animate-in" style={{ animationDelay: '0.4s' }}>
-            <div className="hero-image-wrapper">
-              <img src="/hero.png" alt="Steganography Visualization" style={{ width: '100%', height: 'auto', display: 'block' }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent)' }} />
-            </div>
-          </div>
         </section>
+
 
         <section className="features-grid">
           <Link href="/tool?tab=hide" className="feature-card-link">
