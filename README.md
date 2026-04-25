@@ -20,12 +20,12 @@ A comprehensive client-side steganography and secure communication web suite bui
 ## Project Structure
 
 - `frontend/`: Next.js React application for the web interface, crypto, and stego logic.
-- `backend/`: Java reference implementation for the cryptographic payload structure (not deployed as a server, provided for reference).
+- `backend/`: Java implementation of the cryptographic and steganographic engine. Now includes a Maven build system and a CLI utility.
 
 ## Technical Architecture
 
 ### Cryptography & Payload Format
-The payload is structured to ensure reliable extraction and decryption:
+The payload is structured to ensure reliable extraction and decryption (fully compatible between Frontend and Java Backend):
 - `MAGIC`: 4 bytes `0x53 0x54 0x45 0x47` (`STEG`)
 - `VERSION`: 1 byte (currently `0x01`)
 - `LENGTH`: 4 bytes unsigned big-endian ciphertext length
@@ -36,15 +36,31 @@ The payload is structured to ensure reliable extraction and decryption:
 - `CIPHERTEXT`: Encrypted UTF-8 text
 
 ### Steganography Engines
-- **Image LSB**: Embeds payload bits into the least significant bits of the Red, Green, and Blue channels. Ignores the alpha channel to preserve transparency and avoid visual artifacts.
-- **Image DCT**: Translates the image into the frequency domain using Discrete Cosine Transform. Embeds bits into specific quantized coefficients of 8x8 blocks, randomized via a password-derived PRNG.
-- **Audio LSB**: Parses WAV file headers and embeds bits into the LSB of the audio sample data.
-- **Plausible Deniability Engine**: Embeds the decoy payload in the 0th bit plane and the secret payload in the 1st bit plane of the image.
+- **Image LSB (Shared)**: Both Frontend and Java Backend implement Spatial LSB. It embeds payload bits into the least significant bits of the Red, Green, and Blue channels.
+- **Image DCT (Frontend)**: Translates the image into the frequency domain using Discrete Cosine Transform for higher stealth.
+- **Audio LSB (Frontend)**: Parses WAV file headers and embeds bits into the LSB of the audio sample data.
+- **Plausible Deniability Engine (Frontend)**: Embeds the decoy payload in the 0th bit plane and the secret payload in the 1st bit plane of the image.
 
-### Capacity Math
-- **Image LSB**: `Capacity (bytes) = floor(((width * height * 3) - 312 bits) / 8)`
-- **Image DCT**: `Capacity (bytes) = floor(((floor(width/8) * floor(height/8) * 2) - 312 bits) / 8)`
-- **Audio LSB**: 1 bit per audio sample.
+## Java Backend Usage
+
+The Java backend has been upgraded to a full-featured CLI suite.
+
+### Build
+Requires Java 21+.
+```bash
+cd backend
+gradle build
+```
+
+### Run CLI
+```bash
+gradle run --console=plain
+```
+The CLI allows you to:
+1. Encrypt and Decrypt text (Base64 output).
+2. Hide encrypted text directly into PNG images.
+3. Extract and decrypt text from stego PNG images.
+
 
 ## Development Phases
 
@@ -112,4 +128,4 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 ## Deployment
 - **Frontend**: Designed to be deployed on Vercel, Netlify, or any standard Next.js hosting environment. Just deploy the `frontend/` directory. `npm run build` generates the production bundle.
-- **Backend**: The Java code (`backend/java/com/stegotext/CryptoEngine.java`) is for reference and testing the cryptographic payload structure. It does not need to be deployed as a server.
+- **Backend**: The Java CLI suite can be compiled into a JAR using `gradle jar` and run on any environment with a JVM.

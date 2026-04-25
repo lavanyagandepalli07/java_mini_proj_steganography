@@ -310,6 +310,13 @@ button {
 .deniable-toggle-card.active {
   border-color: var(--accent);
   background: var(--surface-muted);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .deniable-toggle-card.active {
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .deniable-toggle-card.disabled {
@@ -344,6 +351,11 @@ button {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--text);
+  transition: color 0.25s;
+}
+
+.deniable-toggle-card.active .deniable-toggle-title {
+  color: var(--accent-strong);
 }
 
 .deniable-toggle-desc {
