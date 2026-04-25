@@ -1,11 +1,9 @@
 import Link from 'next/link';
-import Header from '../components/Header';
 
 export default function Home() {
   return (
-    <div className="app-shell">
-      <Header />
-      <main className="content-shell">
+    <main className="content-shell">
+
         <section className="hero-luxury" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div className="hero-content">
             <span className="eyebrow animate-in">🕵️ The Art of Invisible Communication</span>
@@ -72,7 +70,7 @@ export default function Home() {
           </Link>
         </section>
       </main>
-    </div>
   );
 }
+
 

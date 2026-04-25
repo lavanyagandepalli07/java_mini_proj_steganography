@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Header from '../../components/Header';
 import StatusAlert from '../../components/StatusAlert';
 import { encrypt, decrypt } from '../../lib/crypto';
 import { embed, extract, calculateCapacity, Algorithm, embedDeniable } from '../../lib/stego';
@@ -348,9 +347,8 @@ export default function ToolPage() {
   };
 
   return (
-    <div className="app-shell">
-      <Header />
-      <main className="content-shell">
+    <main className="content-shell">
+
         <div className={`tool-panel mode-${metadata.theme}`}>
           <section className="tool-headline" style={{ marginBottom: '2rem' }} key={activeTab}>
             <span className="eyebrow animate-in">{metadata.eyebrow}</span>
@@ -555,6 +553,6 @@ export default function ToolPage() {
           )}
         </div>
       </main>
-    </div>
   );
 }
+

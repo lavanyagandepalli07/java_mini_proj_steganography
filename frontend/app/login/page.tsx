@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
-import Header from '../../components/Header';
 import { authEnabled, supabase } from '../../lib/supabaseClient';
 import PasswordStrength from '../../components/PasswordStrength';
 
@@ -62,10 +61,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="app-shell">
-      <Header />
-      <main className="content-shell">
-        <section className="auth-card">
+    <main className="content-shell">
+      <section className="auth-card">
           <div className="auth-intro">
             <span className="eyebrow">👋 Welcome to StegoText</span>
             <h1>Secure messages inside images</h1>
@@ -206,7 +203,7 @@ export default function LoginPage() {
             </div>
           )}
         </section>
-      </main>
-    </div>
+    </main>
   );
 }
+
