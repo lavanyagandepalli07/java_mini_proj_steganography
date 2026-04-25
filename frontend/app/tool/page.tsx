@@ -8,6 +8,7 @@ import { embed, extract, calculateCapacity, Algorithm, embedDeniable } from '../
 import { embedAudio, extractAudio, calculateAudioCapacity } from '../../lib/stego-audio';
 import { generateLsbMask } from '../../lib/analysis';
 import { uploadStego, downloadStego, authEnabled, deleteStego } from '../../lib/supabaseClient';
+import PasswordStrength from '../../components/PasswordStrength';
 
 const tabs = ['🫣 Hide', '🔍 Reveal', '🔬 Analyze'] as const;
 type Tab = (typeof tabs)[number];
@@ -373,6 +374,7 @@ export default function ToolPage() {
                   <label>
                     🔑 Master Password
                     <input type="password" value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" />
+                    <PasswordStrength password={hidePassword} />
                   </label>
 
                   <div
@@ -405,6 +407,7 @@ export default function ToolPage() {
                         <label>
                           Decoy Password
                           <input type="password" value={decoyPassword} onChange={(e) => setDecoyPassword(e.target.value)} disabled={loading} placeholder="e.g. 1234" />
+                          <PasswordStrength password={decoyPassword} />
                         </label>
                       </div>
                     )}

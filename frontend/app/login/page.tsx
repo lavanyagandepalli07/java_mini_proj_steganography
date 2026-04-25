@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header';
 import { authEnabled, supabase } from '../../lib/supabaseClient';
+import PasswordStrength from '../../components/PasswordStrength';
 
 type AuthMode = 'choose' | 'signIn' | 'signUp';
 
@@ -177,6 +178,7 @@ export default function LoginPage() {
                   required
                   disabled={loading}
                 />
+                <PasswordStrength password={password} />
               </label>
               <div className="form-actions">
                 <button type="submit" className="button primary" disabled={loading} style={{ flex: 1 }}>
