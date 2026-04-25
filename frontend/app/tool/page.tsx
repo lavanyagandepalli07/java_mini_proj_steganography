@@ -82,7 +82,6 @@ export default function ToolPage() {
   const [analyzeMaskUrl, setAnalyzeMaskUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check for share link and tab routing on mount
     const searchParams = new URLSearchParams(window.location.search);
     const shareId = searchParams.get('share');
     const ext = searchParams.get('ext') || 'png';
@@ -90,13 +89,13 @@ export default function ToolPage() {
     const tabParam = searchParams.get('tab');
 
     if (shareId) {
-      setActiveTab('🔍 Reveal');
+      setActiveTab('[R] REVEAL');
       loadSharedFile(shareId, ext, burn);
     } else if (tabParam) {
       const tabMap: Record<string, Tab> = {
-        hide: '🫣 Hide',
-        reveal: '🔍 Reveal',
-        analyze: '🔬 Analyze',
+        hide: '[H] HIDE',
+        reveal: '[R] REVEAL',
+        analyze: '[A] ANALYZE',
       };
       if (tabMap[tabParam]) setActiveTab(tabMap[tabParam]);
     }
@@ -348,75 +347,60 @@ export default function ToolPage() {
 
   return (
     <main className="content-shell">
+      <div className={`tool-panel mode-${metadata?.theme}`}>
+        <section className="tool-headline" style={{ marginBottom: '2rem' }} key={activeTab}>
+          <span className="eyebrow animate-in">{metadata?.eyebrow}</span>
+          <h1 className="animate-in" style={{ animationDelay: '0.05s' }}>{metadata?.title}</h1>
+          <p className="animate-in" style={{ animationDelay: '0.1s' }}>{metadata?.desc}</p>
+        </section>
 
-        <div className={`tool-panel mode-${metadata.theme}`}>
-          <section className="tool-headline" style={{ marginBottom: '2rem' }} key={activeTab}>
-            <span className="eyebrow animate-in">{metadata.eyebrow}</span>
-            <h1 className="animate-in" style={{ animationDelay: '0.05s' }}>{metadata.title}</h1>
-            <p className="animate-in" style={{ animationDelay: '0.1s' }}>{metadata.desc}</p>
-          </section>
+        <StatusAlert message={status} loading={loading} variant={statusType} />
+        
+        <div className="tab-list" role="tablist" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              className={activeTab === tab ? 'tab active' : 'tab'}
+              onClick={() => { setActiveTab(tab); setStatus(''); setStatusType('info'); }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
 
-          <StatusAlert message={status} loading={loading} variant={statusType} />
-          
-          <div className="tab-list" role="tablist" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                className={activeTab === tab ? 'tab active' : 'tab'}
-                onClick={() => { setActiveTab(tab); setStatus(''); setStatusType('info'); }}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+        {activeTab === '[H] HIDE' && (
+          <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleHide(); }}>
+            <div className="form-grid">
+              {/* Left Column: Data Input */}
+              <div className="form-section">
+                <h3>[#] 1. Data Input</h3>
+                <label>
+                  Secret Message
+                  <textarea value={hideText} onChange={(e) => setHideText(e.target.value)} disabled={loading} required placeholder="Enter the text you want to hide..." />
+                </label>
+                <label>
+                  🗝️ Master Password
+                  <input type="password" value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" />
+                  <PasswordStrength password={hidePassword} />
+                </label>
 
-          
-          {/* Algorithm selector is now moved inside the form sections for better context */}
-
-          {activeTab === '🫣 Hide' && (
-            <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleHide(); }}>
-              <div className="form-grid">
-                {/* Left Column: Configuration */}
-                <div className="form-section">
-                  <h3>✍️ 1. Secret Configuration</h3>
-                  
-                  <label>
-                    🤫 Secret text to hide
-                    <textarea rows={6} value={hideText} onChange={(e) => setHideText(e.target.value)} disabled={loading} required placeholder="Enter your secret message here..."/>
-                  </label>
-
-                  <label>
-                    🔑 Master Password
-                    <input type="password" value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" />
-                    <PasswordStrength password={hidePassword} />
-                  </label>
-
-                  <div
-                    className={`deniable-toggle-card${isDeniable ? ' active' : ''}${(loading || (hideFileInfo?.isAudio ?? false) || algorithm === 'dct') ? ' disabled' : ''}`}
-                    onClick={() => {
-                      if (!loading && !(hideFileInfo?.isAudio ?? false) && algorithm !== 'dct') {
-                        setIsDeniable(!isDeniable);
-                      }
-                    }}
-                  >
+                <div className="deniable-toggle-card-wrapper" style={{ marginTop: '1rem' }}>
+                  <div className={`deniable-toggle-card ${isDeniable ? 'active' : ''}`} onClick={() => !loading && setIsDeniable(!isDeniable)}>
                     <div className="deniable-toggle-header">
-                      <div className="deniable-toggle-icon">{isDeniable ? '🕵️' : '🔒'}</div>
+                      <div className="deniable-toggle-icon">{isDeniable ? '🌘' : '🌑'}</div>
                       <div className="deniable-toggle-info">
-                        <span className="deniable-toggle-title">Plausible Deniability</span>
-                        <span className="deniable-toggle-desc">
-                          {isDeniable ? 'Active — two passwords, two messages.' : 'Hide a decoy message alongside your real secret.'}
-                        </span>
+                        <span className="deniable-toggle-title">PLAUSIBLE DENIABILITY</span>
+                        <span className="deniable-toggle-desc">Embed a decoy message for extra safety.</span>
                       </div>
-                      <div className={`deniable-pill${isDeniable ? ' on' : ''}`}>
+                      <div className={`deniable-pill ${isDeniable ? 'on' : ''}`}>
                         <div className="deniable-pill-knob" />
                       </div>
                     </div>
-
                     {isDeniable && (
-                      <div className="deniable-fields" onClick={e => e.stopPropagation()}>
+                      <div className="deniable-fields animate-in">
                         <label>
-                          Decoy Text <span style={{ fontWeight: 400, color: 'var(--muted)', fontSize: '0.85rem' }}>(visible with decoy password)</span>
+                          Decoy Message
                           <textarea rows={3} value={decoyText} onChange={(e) => setDecoyText(e.target.value)} disabled={loading} required placeholder="Enter a harmless message someone can see..."/>
                         </label>
                         <label>
@@ -428,131 +412,130 @@ export default function ToolPage() {
                     )}
                   </div>
                 </div>
+              </div>
 
-                {/* Right Column: Carrier & Actions */}
-                <div className="form-section">
-                  <h3>📦 2. Carrier & Output</h3>
+              {/* Right Column: Carrier & Actions */}
+              <div className="form-section">
+                <h3>[#] 2. Carrier & Output</h3>
 
-                  <div className="algorithm-selector" style={{ padding: '1rem', background: 'var(--surface)', borderRadius: '0.8rem', border: '1px solid var(--border)' }}>
-                    <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: 0 }}>
-                      <strong>⚙️ Steganography Algorithm</strong>
-                      <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value as Algorithm)} disabled={loading || isDeniable}>
-                        <option value="lsb">📊 Standard (Spatial LSB) — Best for Images & Audio</option>
-                        <option value="dct">🎯 Advanced (Randomized DCT) — Highest Stealth (Images only)</option>
-                      </select>
+                <div className="algorithm-selector" style={{ padding: '1rem', background: 'var(--surface)', borderRadius: '0', border: '1px solid var(--border)' }}>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: 0 }}>
+                    <strong>[*] STEGANOGRAPHY ALGORITHM</strong>
+                    <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value as Algorithm)} disabled={loading || isDeniable}>
+                      <option value="lsb">L0: STANDARD (SPATIAL LSB)</option>
+                      <option value="dct">F1: ADVANCED (RANDOMIZED DCT)</option>
+                    </select>
+                  </label>
+                </div>
+
+                <label>
+                  [>] Cover file (Image or WAV)
+                  <input type="file" accept="image/*,audio/wav" onChange={(e) => handleHideFileChange(e.target.files?.[0] || null)} disabled={loading} required/>
+                </label>
+
+                {hideFileInfo && (
+                  <div className="image-summary" style={{ padding: '1rem', background: 'var(--accent-soft)', borderRadius: '0', color: 'var(--accent-strong)' }}>
+                    <p style={{ margin: 0 }}><strong>FILE:</strong> {hideFileInfo.name}</p>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem' }}>{renderCapacity()}</p>
+                  </div>
+                )}
+
+                <div className="form-actions">
+                  <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading}>
+                    {loading ? '[...] PROCESSING' : '[>] ENCRYPT & DOWNLOAD'}
+                  </button>
+                </div>
+                
+                {lastStegoBlob && authEnabled && (
+                  <div style={{marginTop: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: '0', background: 'var(--surface)'}}>
+                    <h4 style={{ margin: '0 0 0.5rem 0' }}>[^] SHARE SECURELY</h4>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                        <input type="checkbox" checked={burnAfterReading} onChange={e => setBurnAfterReading(e.target.checked)} disabled={loading} />
+                        [^] Burn after reading (Self-destruct)
                     </label>
+                    {shareLink ? (
+                      <input type="text" readOnly value={shareLink} onClick={e => (e.target as HTMLInputElement).select()} style={{marginTop: '0.5rem', fontSize: '0.8rem'}}/>
+                    ) : (
+                      <button type="button" className="button secondary small" onClick={handleCreateShareLink} disabled={loading} style={{marginTop: '0.5rem', width: '100%'}}>[^] GENERATE SHARE LINK</button>
+                    )}
                   </div>
-
-                  <label>
-                    🖼️ Cover file (Image or WAV)
-                    <input type="file" accept="image/*,audio/wav" onChange={(e) => handleHideFileChange(e.target.files?.[0] || null)} disabled={loading} required/>
-                  </label>
-
-                  {hideFileInfo && (
-                    <div className="image-summary" style={{ padding: '1rem', background: 'var(--accent-soft)', borderRadius: '0.8rem', color: 'var(--accent-strong)' }}>
-                      <p style={{ margin: 0 }}><strong>File:</strong> {hideFileInfo.name}</p>
-                      <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem' }}>{renderCapacity()}</p>
-                    </div>
-                  )}
-
-                  <div className="form-actions">
-                    <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading}>
-                      {loading ? '⏳ Processing...' : '🔐 Encrypt & Download'}
-                    </button>
-                  </div>
-                  
-                  {lastStegoBlob && authEnabled && (
-                    <div style={{marginTop: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: '0.8rem', background: 'var(--surface)'}}>
-                      <h4 style={{ margin: '0 0 0.5rem 0' }}>🔗 Share Securely</h4>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
-                          <input type="checkbox" checked={burnAfterReading} onChange={e => setBurnAfterReading(e.target.checked)} disabled={loading} />
-                          🔥 Burn after reading (Self-destruct)
-                      </label>
-                      {shareLink ? (
-                        <input type="text" readOnly value={shareLink} onClick={e => (e.target as HTMLInputElement).select()} style={{marginTop: '0.5rem', fontSize: '0.8rem'}}/>
-                      ) : (
-                        <button type="button" className="button secondary small" onClick={handleCreateShareLink} disabled={loading} style={{marginTop: '0.5rem', width: '100%'}}>🔗 Generate Share Link</button>
-                      )}
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
-            </form>
-          )}
-
-          {activeTab === '🔍 Reveal' && (
-            <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleReveal(); }}>
-              <div className="form-grid">
-                <div className="form-section">
-                  <h3>📂 1. Carrier Input</h3>
-                  <label>
-                    🖼️ Stego file (Image or WAV)
-                    <input type="file" accept="image/*,audio/wav" onChange={(e) => { setRevealFile(e.target.files?.[0] || null); setRevealedText(''); }} disabled={loading} required={!revealFile} />
-                    {revealFile && <small>Ready to extract from: {revealFile.name}</small>}
-                  </label>
-                  <label>
-                    🔑 Password
-                    <input type="password" placeholder="Required if hidden with a password or DCT" value={revealPassword} onChange={(e) => setRevealPassword(e.target.value)} disabled={loading} />
-                  </label>
-                  <div className="form-actions">
-                    <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading || !revealFile}>
-                      {loading ? '⏳ Extracting...' : '🔍 Extract & Decrypt'}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h3>📄 2. Extracted Content</h3>
-                  <label>
-                    {revealedText ? '✅ DECRYPTED PAYLOAD:' : '📭 STANDBY for extraction...'}
-                    <div style={{ 
-                      minHeight: '200px', 
-                      padding: '1rem', 
-                      background: 'var(--surface-muted)', 
-                      border: '1px solid var(--border)',
-                      fontFamily: 'monospace',
-                      fontSize: '0.9rem',
-                      color: 'var(--accent-strong)',
-                      whiteSpace: 'pre-wrap',
-                      overflowY: 'auto'
-                    }}>
-                      {revealedText ? <TypewriterEffect text={revealedText} /> : '...'}
-                    </div>
-                  </label>
-                  {revealedText && (
-                    <button type="button" className="button secondary small" onClick={() => { navigator.clipboard.writeText(revealedText); setStatus('Copied to clipboard!'); setStatusType('success'); }}>
-                      📋 Copy to Clipboard
-                    </button>
-                  )}
-                </div>
-              </div>
-            </form>
-          )}
-
-          {activeTab === '🔬 Analyze' && (
-            <div className="form-section">
-              <h3>🔬 LSB Plane Analysis</h3>
-              <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
-                Upload an image to view its Least Significant Bit (LSB) plane. If you see random "static" noise instead of a faint version of the image, it likely contains hidden data.
-              </p>
-              
-              <label>
-                Image to Analyze
-                <input type="file" accept="image/*" onChange={(e) => handleAnalyze(e.target.files?.[0] || null)} disabled={loading} />
-              </label>
-
-              {analyzeMaskUrl && (
-                <div className="analysis-result-container scanlines" style={{marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: '0', textAlign: 'center', border: '1px solid var(--border)'}}>
-                  <h4 style={{ color: 'var(--accent-strong)', marginBottom: '1rem', fontFamily: 'monospace' }}>🔭 VISUAL NOISE MAP [L0-PLANE]:</h4>
-                  <img src={analyzeMaskUrl} alt="LSB Mask" style={{ maxWidth: '100%', border: '1px solid var(--border)', borderRadius: '0' }} />
-                  <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginTop: '1rem', fontFamily: 'monospace' }}>SIGNAL DETECTED: Static noise pattern confirms LSB steganography.</p>
-                </div>
-              )}
-
             </div>
-          )}
-        </div>
-      </main>
+          </form>
+        )}
+
+        {activeTab === '[R] REVEAL' && (
+          <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleReveal(); }}>
+            <div className="form-grid">
+              <div className="form-section">
+                <h3>[#] 1. Carrier Input</h3>
+                <label>
+                  [>] Stego file (Image or WAV)
+                  <input type="file" accept="image/*,audio/wav" onChange={(e) => { setRevealFile(e.target.files?.[0] || null); setRevealedText(''); }} disabled={loading} required={!revealFile} />
+                  {revealFile && <small>Ready to extract from: {revealFile.name}</small>}
+                </label>
+                <label>
+                  🗝️ Password
+                  <input type="password" placeholder="Required if hidden with a password or DCT" value={revealPassword} onChange={(e) => setRevealPassword(e.target.value)} disabled={loading} />
+                </label>
+                <div className="form-actions">
+                  <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading || !revealFile}>
+                    {loading ? '[...] EXTRACTING' : '[>] EXTRACT & DECRYPT'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h3>[#] 2. Extracted Content</h3>
+                <label>
+                  {revealedText ? '✅ DECRYPTED PAYLOAD:' : '[-] STANDBY for extraction...'}
+                  <div style={{ 
+                    minHeight: '200px', 
+                    padding: '1rem', 
+                    background: 'var(--surface-muted)', 
+                    border: '1px solid var(--border)',
+                    fontFamily: 'monospace',
+                    fontSize: '0.9rem',
+                    color: 'var(--accent-strong)',
+                    whiteSpace: 'pre-wrap',
+                    overflowY: 'auto'
+                  }}>
+                    {revealedText ? <TypewriterEffect text={revealedText} /> : '...'}
+                  </div>
+                </label>
+                {revealedText && (
+                  <button type="button" className="button secondary small" onClick={() => { navigator.clipboard.writeText(revealedText); setStatus('Copied to clipboard!'); setStatusType('success'); }}>
+                    [+] COPY TO CLIPBOARD
+                  </button>
+                )}
+              </div>
+            </div>
+          </form>
+        )}
+
+        {activeTab === '[A] ANALYZE' && (
+          <div className="form-section">
+            <h3>[*] LSB PLANE ANALYSIS</h3>
+            <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
+              Upload an image to view its Least Significant Bit (LSB) plane. If you see random "static" noise instead of a faint version of the image, it likely contains hidden data.
+            </p>
+            
+            <label>
+              Image to Analyze
+              <input type="file" accept="image/*" onChange={(e) => handleAnalyze(e.target.files?.[0] || null)} disabled={loading} />
+            </label>
+
+            {analyzeMaskUrl && (
+              <div className="analysis-result-container scanlines" style={{marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: '0', textAlign: 'center', border: '1px solid var(--border)'}}>
+                <h4 style={{ color: 'var(--accent-strong)', marginBottom: '1rem', fontFamily: 'monospace' }}>[*] VISUAL NOISE MAP [L0-PLANE]:</h4>
+                <img src={analyzeMaskUrl} alt="LSB Mask" style={{ maxWidth: '100%', border: '1px solid var(--border)', borderRadius: '0' }} />
+                <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginTop: '1rem', fontFamily: 'monospace' }}>SIGNAL DETECTED: Static noise pattern confirms LSB steganography.</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
-
