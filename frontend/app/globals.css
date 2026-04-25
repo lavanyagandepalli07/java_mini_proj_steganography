@@ -47,9 +47,13 @@ body {
 }
 
 body {
-  background: radial-gradient(circle at top left, rgba(123, 63, 97, 0.08), transparent 35%),
+  background: 
+    linear-gradient(rgba(123, 63, 97, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(123, 63, 97, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at top left, rgba(123, 63, 97, 0.08), transparent 35%),
     radial-gradient(circle at bottom right, rgba(173, 117, 141, 0.08), transparent 30%),
     var(--bg);
+  background-size: 40px 40px, 40px 40px, 100%, 100%, 100%;
 }
 
 a,
@@ -211,11 +215,26 @@ button {
 .auth-card,
 .tool-panel {
   background: var(--surface);
-  border: 1px solid rgba(216, 184, 176, 0.7);
-  border-radius: 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 0; /* Spy-tech often uses sharp or minimal corners */
   padding: 2rem;
   box-shadow: var(--shadow);
+  position: relative;
 }
+
+/* Targeting corners for the 'Spy' look */
+.hero-card::before, .hero-card::after,
+.auth-card::before, .auth-card::after,
+.tool-panel::before, .tool-panel::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--accent);
+}
+
+.hero-card::before, .auth-card::before, .tool-panel::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+.hero-card::after, .auth-card::after, .tool-panel::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
 
 .eyebrow {
   display: inline-flex;
@@ -318,11 +337,12 @@ button {
 .panel-form textarea {
   width: 100%;
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  border-radius: 0.25rem;
   padding: 0.95rem 1rem;
-  font: inherit;
+  font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
   background: var(--surface);
   color: var(--text);
+  font-size: 0.9rem;
 }
 
 .panel-form input::placeholder,
@@ -657,4 +677,21 @@ button {
 .tool-headline p {
   max-width: 600px;
   font-size: 1.05rem;
+}
+
+/* Spy CRT Overlay */
+.scanlines {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanlines::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+  z-index: 2;
 }

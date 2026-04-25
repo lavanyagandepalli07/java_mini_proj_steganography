@@ -21,6 +21,23 @@ type FileInfo = {
   capacity?: number;
 };
 
+function TypewriterEffect({ text }: { text: string }) {
+  const [displayedText, setDisplayedText] = useState('');
+  
+  useEffect(() => {
+    setDisplayedText('');
+    let i = 0;
+    const timer = setInterval(() => {
+      setDisplayedText((prev) => text.slice(0, i + 1));
+      i++;
+      if (i >= text.length) clearInterval(timer);
+    }, 20);
+    return () => clearInterval(timer);
+  }, [text]);
+
+  return <>{displayedText}</>;
+}
+
 export default function ToolPage() {
   const [activeTab, setActiveTab] = useState<Tab>('🫣 Hide');
 
@@ -489,8 +506,20 @@ export default function ToolPage() {
                 <div className="form-section">
                   <h3>📄 2. Extracted Content</h3>
                   <label>
-                    {revealedText ? '✅ Hidden Message Found:' : '📭 No message extracted yet.'}
-                    <textarea rows={10} value={revealedText} readOnly placeholder="The extracted message will appear here..." />
+                    {revealedText ? '✅ DECRYPTED PAYLOAD:' : '📭 STANDBY for extraction...'}
+                    <div style={{ 
+                      minHeight: '200px', 
+                      padding: '1rem', 
+                      background: 'var(--surface-muted)', 
+                      border: '1px solid var(--border)',
+                      fontFamily: 'monospace',
+                      fontSize: '0.9rem',
+                      color: 'var(--accent-strong)',
+                      whiteSpace: 'pre-wrap',
+                      overflowY: 'auto'
+                    }}>
+                      {revealedText ? <TypewriterEffect text={revealedText} /> : '...'}
+                    </div>
                   </label>
                   {revealedText && (
                     <button type="button" className="button secondary small" onClick={() => { navigator.clipboard.writeText(revealedText); setStatus('Copied to clipboard!'); setStatusType('success'); }}>
@@ -515,12 +544,13 @@ export default function ToolPage() {
               </label>
 
               {analyzeMaskUrl && (
-                <div className="analysis-result-container" style={{marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: '0.8rem', textAlign: 'center', border: '1px solid var(--border)'}}>
-                  <h4 style={{ color: 'var(--accent-strong)', marginBottom: '1rem' }}>🔭 Visualized LSB Noise Map:</h4>
-                  <img src={analyzeMaskUrl} alt="LSB Mask" style={{ maxWidth: '100%', border: '1px solid var(--border)', borderRadius: '0.4rem' }} />
-                  <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginTop: '1rem' }}>Static noise pattern (snow-like) confirms LSB steganography.</p>
+                <div className="analysis-result-container scanlines" style={{marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: '0', textAlign: 'center', border: '1px solid var(--border)'}}>
+                  <h4 style={{ color: 'var(--accent-strong)', marginBottom: '1rem', fontFamily: 'monospace' }}>🔭 VISUAL NOISE MAP [L0-PLANE]:</h4>
+                  <img src={analyzeMaskUrl} alt="LSB Mask" style={{ maxWidth: '100%', border: '1px solid var(--border)', borderRadius: '0' }} />
+                  <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginTop: '1rem', fontFamily: 'monospace' }}>SIGNAL DETECTED: Static noise pattern confirms LSB steganography.</p>
                 </div>
               )}
+
             </div>
           )}
         </div>
