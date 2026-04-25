@@ -1,6 +1,5 @@
 :root {
   color-scheme: light;
-  font-family: Inter, system-ui, sans-serif;
   line-height: 1.6;
   background: #f3ede3;
   color: #3f2a34;
@@ -253,6 +252,8 @@ button {
   font-size: clamp(2rem, 2.5vw, 3rem);
   line-height: 1.05;
   color: var(--accent-strong);
+  letter-spacing: -0.02em;
+  text-transform: uppercase; /* Headings in spyware/HUD are often uppercase */
 }
 
 .hero-card p,

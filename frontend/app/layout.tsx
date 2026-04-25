@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
+import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '../components/Header';
+
+const mono = JetBrains_Mono({ 
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'StegoText - Hide and reveal messages in PNGs',
@@ -9,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={mono.className}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -36,5 +42,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
 
 
