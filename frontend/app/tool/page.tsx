@@ -388,7 +388,7 @@ export default function ToolPage() {
                   <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                     <input type={showHidePassword ? "text" : "password"} value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" style={{ width: '100%', paddingRight: '2.5rem' }} />
                     <button type="button" onClick={() => setShowHidePassword(!showHidePassword)} style={{ position: 'absolute', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}>
-                      {showHidePassword ? '\u{1F441}\u{FE0F}' : '\u{1F648}'}
+                      {showHidePassword ? '\u{1F576}\u{FE0F}' : '\u{1F648}'}
                     </button>
                   </div>
                   <PasswordStrength password={hidePassword} />
@@ -417,7 +417,7 @@ export default function ToolPage() {
                           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                             <input type={showDecoyPassword ? "text" : "password"} value={decoyPassword} onChange={(e) => setDecoyPassword(e.target.value)} disabled={loading} placeholder="e.g. 1234" style={{ width: '100%', paddingRight: '2.5rem' }} />
                             <button type="button" onClick={() => setShowDecoyPassword(!showDecoyPassword)} style={{ position: 'absolute', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}>
-                              {showDecoyPassword ? '\u{1F441}\u{FE0F}' : '\u{1F648}'}
+                              {showDecoyPassword ? '\u{1F576}\u{FE0F}' : '\u{1F648}'}
                             </button>
                           </div>
                           <PasswordStrength password={decoyPassword} />
@@ -494,7 +494,7 @@ export default function ToolPage() {
                   <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                     <input type={showRevealPassword ? "text" : "password"} placeholder="Required if hidden with a password or DCT" value={revealPassword} onChange={(e) => setRevealPassword(e.target.value)} disabled={loading} style={{ width: '100%', paddingRight: '2.5rem' }} />
                     <button type="button" onClick={() => setShowRevealPassword(!showRevealPassword)} style={{ position: 'absolute', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}>
-                      {showRevealPassword ? '\u{1F441}\u{FE0F}' : '\u{1F648}'}
+                      {showRevealPassword ? '\u{1F576}\u{FE0F}' : '\u{1F648}'}
                     </button>
                   </div>
                 </label>
