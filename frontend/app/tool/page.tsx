@@ -184,7 +184,7 @@ export default function ToolPage() {
       return;
     }
 
-
+    const isAudio = hideFile.type === 'audio/wav';
 
     setLoading(true);
     setStatus('Encrypting and embedding...');
