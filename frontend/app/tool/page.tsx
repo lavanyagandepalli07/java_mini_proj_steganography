@@ -434,7 +434,7 @@ export default function ToolPage() {
 
                 <div className="algorithm-selector" style={{ padding: '1rem', background: 'var(--surface)', borderRadius: '0', border: '1px solid var(--border)' }}>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: 0 }}>
-                    <strong>[*] STEGANOGRAPHY ALGORITHM</strong>
+                    <strong>{'\u{1F570}\u{FE0F}'} CORE_ENGINE</strong>
                     <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value as Algorithm)} disabled={loading || isDeniable}>
                       <option value="lsb">L0: STANDARD (SPATIAL LSB)</option>
                       <option value="dct">F1: ADVANCED (RANDOMIZED DCT)</option>
@@ -443,7 +443,7 @@ export default function ToolPage() {
                 </div>
 
                 <label>
-                  {'[>] Cover file (Image or WAV)'}
+                  {'\u{1F4E5}'} Carrier Upload (Image or WAV)
                   <input type="file" accept="image/*,audio/wav" onChange={(e) => handleHideFileChange(e.target.files?.[0] || null)} disabled={loading} required/>
                 </label>
 
@@ -462,10 +462,10 @@ export default function ToolPage() {
                 
                 {lastStegoBlob && authEnabled && (
                   <div style={{marginTop: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: '0', background: 'var(--surface)'}}>
-                    <h4 style={{ margin: '0 0 0.5rem 0' }}>[^] SHARE SECURELY</h4>
+                    <h4 style={{ margin: '0 0 0.5rem 0' }}>{'\u{1F4E1}'} OMEGA_SHARE</h4>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
                         <input type="checkbox" checked={burnAfterReading} onChange={e => setBurnAfterReading(e.target.checked)} disabled={loading} />
-                        [^] Burn after reading (Self-destruct)
+                        {'\u{2622}\u{FE0F}'} Burn after reading (Self-destruct)
                     </label>
                     {shareLink ? (
                       <input type="text" readOnly value={shareLink} onClick={e => (e.target as HTMLInputElement).select()} style={{marginTop: '0.5rem', fontSize: '0.8rem'}}/>
@@ -485,7 +485,7 @@ export default function ToolPage() {
               <div className="form-section">
                 <h3>[#] 1. Carrier Input</h3>
                 <label>
-                  {'[>] Stego file (Image or WAV)'}
+                  {'\u{1F4E4}'} Signal Import (Image or WAV)
                   <input type="file" accept="image/*,audio/wav" onChange={(e) => { setRevealFile(e.target.files?.[0] || null); setRevealedText(''); }} disabled={loading} required={!revealFile} />
                   {revealFile && <small>Ready to extract from: {revealFile.name}</small>}
                 </label>
@@ -535,7 +535,7 @@ export default function ToolPage() {
 
         {activeTab === '\u{1F4E1} SCAN' && (
           <div className="form-section">
-            <h3>[*] LSB PLANE ANALYSIS</h3>
+            <h3>{'\u{1F50D}'} LSB_ANALYSIS</h3>
             <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
               Upload an image to view its Least Significant Bit (LSB) plane. If you see random "static" noise instead of a faint version of the image, it likely contains hidden data.
             </p>
@@ -547,7 +547,7 @@ export default function ToolPage() {
 
             {analyzeMaskUrl && (
               <div className="analysis-result-container scanlines" style={{marginTop: '1.5rem', padding: '1rem', background: 'var(--bg)', borderRadius: '0', textAlign: 'center', border: '1px solid var(--border)'}}>
-                <h4 style={{ color: 'var(--accent-strong)', marginBottom: '1rem', fontFamily: 'monospace' }}>[*] VISUAL NOISE MAP [L0-PLANE]:</h4>
+                <h4 style={{ color: 'var(--accent-strong)', marginBottom: '1rem', fontFamily: 'monospace' }}>{'\u{1F4E1}'} VISUAL NOISE MAP [L0-PLANE]:</h4>
                 <img src={analyzeMaskUrl} alt="LSB Mask" style={{ maxWidth: '100%', border: '1px solid var(--border)', borderRadius: '0' }} />
                 <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginTop: '1rem', fontFamily: 'monospace' }}>SIGNAL DETECTED: Static noise pattern confirms LSB steganography.</p>
               </div>

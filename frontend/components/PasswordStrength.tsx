@@ -17,11 +17,11 @@ export default function PasswordStrength({ password }: PasswordStrengthProps) {
     if (/[0-9]/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    if (score <= 1) return { score, label: 'Very Weak', color: '#ff4d4f', width: '20%' };
-    if (score === 2) return { score, label: 'Weak', color: '#ff7a45', width: '40%' };
-    if (score === 3) return { score, label: 'Fair', color: '#ffc53d', width: '60%' };
-    if (score === 4) return { score, label: 'Strong', color: '#73d13d', width: '80%' };
-    return { score, label: 'Very Strong', color: '#52c41a', width: '100%' };
+    if (score <= 1) return { score, label: '\u{2620}\u{FE0F} VULNERABLE', color: '#ff4d4f', width: '20%' };
+    if (score === 2) return { score, label: '\u{26A0}\u{FE0F} WEAK', color: '#ff7a45', width: '40%' };
+    if (score === 3) return { score, label: '\u{1F513} FAIR', color: '#ffc53d', width: '60%' };
+    if (score === 4) return { score, label: '\u{1F512} STRONG', color: '#73d13d', width: '80%' };
+    return { score, label: '\u{1F510} ELITE', color: '#52c41a', width: '100%' };
   }, [password]);
 
   if (!password) return null;
