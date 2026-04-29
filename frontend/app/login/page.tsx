@@ -64,7 +64,7 @@ export default function LoginPage() {
     <main className="content-shell">
       <section className="auth-card">
           <div className="auth-intro">
-            <span className="eyebrow">👋 Welcome to StegoText</span>
+            <span className="eyebrow">{'\u{1F44B}'} Welcome to StegoText</span>
             <h1>Secure messages inside images</h1>
             <p>
               Hide and reveal secret text using advanced steganography — entirely in your browser.
@@ -87,7 +87,7 @@ export default function LoginPage() {
                 style={{ width: '100%' }}
                 onClick={() => { setMode('signIn'); setStatus(''); }}
               >
-                🔓 Sign In
+                {'\u{1F513}'} Sign In
               </button>
               <button
                 type="button"
@@ -95,7 +95,7 @@ export default function LoginPage() {
                 style={{ width: '100%' }}
                 onClick={() => { setMode('signUp'); setStatus(''); }}
               >
-                ✨ Create Account
+                {'\u{2728}'} Create Account
               </button>
               <div style={{ textAlign: 'center', borderTop: '1px solid var(--border)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <Link href="/tool" className="nav-link" style={{ fontSize: '0.9rem' }}>
@@ -111,7 +111,7 @@ export default function LoginPage() {
           {/* Mode: Sign In */}
           {mode === 'signIn' && (
             <form className="panel-form" onSubmit={handleSubmit} style={{ marginTop: '1.5rem' }}>
-              <h3 style={{ margin: '0 0 1rem', color: 'var(--accent-strong)' }}>🔓 Sign In</h3>
+              <h3 style={{ margin: '0 0 1rem', color: 'var(--accent-strong)' }}>{'\u{1F513}'} Sign In</h3>
               <label>
                 Email
                 <input
@@ -136,7 +136,7 @@ export default function LoginPage() {
               </label>
               <div className="form-actions">
                 <button type="submit" className="button primary" disabled={loading} style={{ flex: 1 }}>
-                  {loading ? '⏳ Signing in...' : '🔓 Sign In'}
+                  {loading ? '\u{23F3} Signing in...' : '\u{1F513} Sign In'}
                 </button>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
@@ -153,7 +153,7 @@ export default function LoginPage() {
           {/* Mode: Sign Up */}
           {mode === 'signUp' && (
             <form className="panel-form" onSubmit={handleSubmit} style={{ marginTop: '1.5rem' }}>
-              <h3 style={{ margin: '0 0 1rem', color: 'var(--accent-strong)' }}>✨ Create Account</h3>
+              <h3 style={{ margin: '0 0 1rem', color: 'var(--accent-strong)' }}>{'\u{2728}'} Create Account</h3>
               <label>
                 Email
                 <input
@@ -179,7 +179,7 @@ export default function LoginPage() {
               </label>
               <div className="form-actions">
                 <button type="submit" className="button primary" disabled={loading} style={{ flex: 1 }}>
-                  {loading ? '⏳ Creating account...' : '✨ Create Account'}
+                  {loading ? '\u{23F3} Creating account...' : '\u{2728} Create Account'}
                 </button>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
