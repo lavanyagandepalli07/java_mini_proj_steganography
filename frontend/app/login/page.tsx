@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { authEnabled, supabase } from '../../lib/supabaseClient';
 import PasswordStrength from '../../components/PasswordStrength';
+import StatusAlert from '../../components/StatusAlert';
 
 type AuthMode = 'choose' | 'signIn' | 'signUp';
 
@@ -72,11 +73,9 @@ export default function LoginPage() {
           </div>
 
           {/* Status alert */}
-          {status && (
-            <div className={`status-alert status-alert--${statusType}`} role="status" style={{ marginTop: '1rem' }}>
-              <p>{status}</p>
-            </div>
-          )}
+          <div style={{ marginTop: '1rem' }}>
+            <StatusAlert message={status} variant={statusType} loading={loading} />
+          </div>
 
           {/* Mode: Choose Sign In or Sign Up */}
           {mode === 'choose' && (
@@ -99,10 +98,10 @@ export default function LoginPage() {
               </button>
               <div style={{ textAlign: 'center', borderTop: '1px solid var(--border)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <Link href="/tool" className="nav-link" style={{ fontSize: '0.9rem' }}>
-                  👤 Continue as Guest →
+                  {'\u{1F464}'} Continue as Guest {'\u{2192}'}
                 </Link>
                 <Link href="/" className="nav-link" style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
-                  🏠 Back to Landing Page
+                  {'\u{1F310}'} Back to Landing Page
                 </Link>
               </div>
             </div>
@@ -141,7 +140,7 @@ export default function LoginPage() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
                 <button type="button" className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => { setMode('choose'); setStatus(''); setEmail(''); setPassword(''); }}>
-                  ← Back
+                  {'\u{2190}'} Back
                 </button>
                 <button type="button" className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)' }} onClick={() => { setMode('signUp'); setStatus(''); setEmail(''); setPassword(''); }}>
                   Create an account
@@ -184,7 +183,7 @@ export default function LoginPage() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
                 <button type="button" className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => { setMode('choose'); setStatus(''); setEmail(''); setPassword(''); }}>
-                  ← Back
+                  {'\u{2190}'} Back
                 </button>
                 <button type="button" className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)' }} onClick={() => { setMode('signIn'); setStatus(''); setEmail(''); setPassword(''); }}>
                   Already have an account?
