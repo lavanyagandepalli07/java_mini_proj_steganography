@@ -378,7 +378,7 @@ export default function ToolPage() {
             <div className="form-grid">
               {/* Left Column: Data Input */}
               <div className="form-section">
-                <h3>[#] 1. Data Input</h3>
+                <h3>{'\u{1F4E5}'} 1. Data Input</h3>
                 <label>
                   Secret Message
                   <textarea value={hideText} onChange={(e) => setHideText(e.target.value)} disabled={loading} required placeholder="Enter the text you want to hide..." />
@@ -430,7 +430,7 @@ export default function ToolPage() {
 
               {/* Right Column: Carrier & Actions */}
               <div className="form-section">
-                <h3>[#] 2. Carrier & Output</h3>
+                <h3>{'\u{1F4E4}'} 2. Carrier & Output</h3>
 
                 <div className="algorithm-selector" style={{ padding: '1rem', background: 'var(--surface)', borderRadius: '0', border: '1px solid var(--border)' }}>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: 0 }}>
@@ -456,7 +456,7 @@ export default function ToolPage() {
 
                 <div className="form-actions">
                   <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading}>
-                    {loading ? '[...] PROCESSING' : '[>] ENCRYPT & DOWNLOAD'}
+                    {loading ? '\u{23F3} PROCESSING' : '\u{1F680} ENCRYPT & DOWNLOAD'}
                   </button>
                 </div>
                 
@@ -470,7 +470,7 @@ export default function ToolPage() {
                     {shareLink ? (
                       <input type="text" readOnly value={shareLink} onClick={e => (e.target as HTMLInputElement).select()} style={{marginTop: '0.5rem', fontSize: '0.8rem'}}/>
                     ) : (
-                      <button type="button" className="button secondary small" onClick={handleCreateShareLink} disabled={loading} style={{marginTop: '0.5rem', width: '100%'}}>[^] GENERATE SHARE LINK</button>
+                      <button type="button" className="button secondary small" onClick={handleCreateShareLink} disabled={loading} style={{marginTop: '0.5rem', width: '100%'}}>{'\u{1F4E1} GENERATE SHARE LINK'}</button>
                     )}
                   </div>
                 )}
@@ -483,7 +483,7 @@ export default function ToolPage() {
           <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleReveal(); }}>
             <div className="form-grid">
               <div className="form-section">
-                <h3>[#] 1. Carrier Input</h3>
+                <h3>{'\u{1F4E5}'} 1. Carrier Input</h3>
                 <label>
                   {'\u{1F4E4}'} Signal Import (Image or WAV)
                   <input type="file" accept="image/*,audio/wav" onChange={(e) => { setRevealFile(e.target.files?.[0] || null); setRevealedText(''); }} disabled={loading} required={!revealFile} />
@@ -500,15 +500,15 @@ export default function ToolPage() {
                 </label>
                 <div className="form-actions">
                   <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading || !revealFile}>
-                    {loading ? '[...] EXTRACTING' : '[>] EXTRACT & DECRYPT'}
+                    {loading ? '\u{23F3} EXTRACTING' : '\u{1F50E} EXTRACT & DECRYPT'}
                   </button>
                 </div>
               </div>
 
               <div className="form-section">
-                <h3>[#] 2. Extracted Content</h3>
+                <h3>{'\u{1F4E4}'} 2. Extracted Content</h3>
                 <label>
-                  {revealedText ? '✅ DECRYPTED PAYLOAD:' : '[-] STANDBY for extraction...'}
+                  {revealedText ? '\u{2705} DECRYPTED PAYLOAD:' : '\u{23F3} STANDBY for extraction...'}
                   <div style={{ 
                     minHeight: '200px', 
                     padding: '1rem', 
@@ -525,7 +525,7 @@ export default function ToolPage() {
                 </label>
                 {revealedText && (
                   <button type="button" className="button secondary small" onClick={() => { navigator.clipboard.writeText(revealedText); setStatus('Copied to clipboard!'); setStatusType('success'); }}>
-                    [+] COPY TO CLIPBOARD
+                    {'\u{1F4CB}'} COPY TO CLIPBOARD
                   </button>
                 )}
               </div>
