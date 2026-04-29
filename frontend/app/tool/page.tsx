@@ -482,11 +482,19 @@ export default function ToolPage() {
                     </div>
                     {isSecureShareEnabled && (
                       <div className="deniable-fields animate-in" onClick={(e) => e.stopPropagation()}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--accent-strong)', cursor: 'pointer', fontWeight: 600 }}>
-                          <input type="checkbox" checked={burnAfterReading} onChange={e => setBurnAfterReading(e.target.checked)} disabled={loading} />
-                          {'\u{2622}\u{FE0F}'} Burn after reading (Self-destruct)
-                        </label>
-                        <p style={{ margin: '0.5rem 0 0 1.5rem', fontSize: '0.8rem', color: 'var(--muted)' }}>
+                        <div 
+                          style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: 'pointer', userSelect: 'none' }}
+                          onClick={() => !loading && setBurnAfterReading(!burnAfterReading)}
+                        >
+                          <div style={{ fontSize: '1.2rem' }}>{'\u{2622}\u{FE0F}'}</div>
+                          <div style={{ flex: 1 }}>
+                            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--accent-strong)' }}>BURN AFTER READING</span>
+                          </div>
+                          <div className={`deniable-pill ${burnAfterReading ? 'on' : ''}`}>
+                            <div className="deniable-pill-knob" />
+                          </div>
+                        </div>
+                        <p style={{ margin: '0.5rem 0 0 2rem', fontSize: '0.8rem', color: 'var(--muted)' }}>
                           File will be permanently deleted from the cloud after the first access.
                         </p>
                       </div>
