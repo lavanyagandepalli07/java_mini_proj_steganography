@@ -5,7 +5,7 @@ export default function Home() {
     <main className="content-shell">
       <section className="hero-luxury" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div className="hero-content">
-          <span className="eyebrow animate-in">{'\u{1F575}\u{FE0F}'} :: PROTOCOL_OMEGA | INVISIBLE COMMUNICATION</span>
+          <span className="eyebrow animate-in">{'\u{1F575}\u{FE0F}'} PROTOCOL_OMEGA | INVISIBLE COMMUNICATION</span>
           <h1 className="animate-in" style={{ animationDelay: '0.1s' }}>
             <span className="gradient-text">Securely Hide Messages</span> Inside Images.
           </h1>

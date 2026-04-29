@@ -43,11 +43,11 @@ export default function ToolPage() {
   const getTabMetadata = (tab: Tab) => {
     switch (tab) {
       case '\u{1F47E} HIDE':
-        return { title: 'ENCRYPT & HIDE', desc: 'Hide secret messages inside image or audio files.', eyebrow: ':: ENCRYPTION_MODE', theme: 'hide' };
+        return { title: 'ENCRYPT & HIDE', desc: 'Hide secret messages inside image or audio files.', eyebrow: 'ENCRYPTION_MODE', theme: 'hide' };
       case '\u{1F50E} REVEAL':
-        return { title: 'EXTRACT & DECRYPT', desc: 'Recover hidden messages from your files.', eyebrow: ':: DECRYPTION_MODE', theme: 'reveal' };
+        return { title: 'EXTRACT & DECRYPT', desc: 'Recover hidden messages from your files.', eyebrow: 'DECRYPTION_MODE', theme: 'reveal' };
       case '\u{1F4E1} ANALYZE':
-        return { title: 'IMAGE ANALYSIS', desc: 'Scan files for hidden data patterns.', eyebrow: ':: FORENSIC_MODE', theme: 'analyze' };
+        return { title: 'IMAGE ANALYSIS', desc: 'Scan files for hidden data patterns.', eyebrow: 'FORENSIC_MODE', theme: 'analyze' };
     }
   };
 
