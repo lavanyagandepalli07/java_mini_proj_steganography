@@ -63,52 +63,53 @@ The CLI allows you to:
 3. Extract and decrypt text from stego PNG images.
 
 
-## Development Phases
+## Development Roadmap
+
+The project evolved through several key engineering phases, each adding layers of security, stealth, and user experience.
 
 ### Phase 1 — UI Scaffold
 - Created the `frontend/` app shell with basic page routes.
 - Implemented the Hide / Reveal tool page and responsive layout.
-- Established the visual structure, dark mode, and baseline navigation.
+- Established the visual structure and baseline navigation.
 
-### Phase 2 — Authentication
-- Added optional Supabase auth integration in the frontend.
-- Built login form, auth state handling, and guest path behavior.
-- Ensured the core tool still works perfectly without auth configuration.
+### Phase 2 — Authentication & Cloud
+- Integrated Supabase for optional user authentication.
+- Built login forms, auth state handling, and guest-path behavior.
+- Configured secure storage buckets for cloud-based stego sharing.
 
-### Phase 3 — Crypto Module
+### Phase 3 — Cryptography Suite
 - Implemented browser-side encryption in `frontend/lib/crypto.ts`.
-- Standardized the binary payload format with versioning, salt, IV, and ciphertext.
+- Developed support for multiple algorithms: **AES-256 GCM** (Authenticated) and **AES-256 CBC**.
+- Standardized the binary payload format with versioning, salt, and IV for cross-platform compatibility.
 
-### Phase 4 — Core Stego Module
-- Implemented `frontend/lib/stego.ts` for spatial LSB embed and extract workflows.
-- Used the Canvas API to read and modify image pixels securely.
-- Handled payload capacity calculations and image size limits.
+### Phase 4 — Core Steganography (LSB)
+- Developed the Spatial LSB engine for pixel-perfect data embedding in PNG images.
+- Implemented the **Audio Stego Engine** for lossless WAV files, parsing headers and sample data directly in the browser.
 
-### Phase 5 — End-to-End Flow
-- Wired the Hide form to encrypt text and generate a downloadable PNG.
-- Wired the Reveal form to decode, decrypt, and display hidden text.
-- Managed file inputs, status updates, and browser download behavior.
+### Phase 5 — Advanced Algorithms (DCT)
+- Built the **Frequency-Domain Engine** using Discrete Cosine Transform (DCT).
+- Implemented randomized coefficient selection to resist advanced steganalysis and statistical inspection.
 
-### Phase 6 — UX and Polish
-- Added loading/feedback states, success/error alerts, and form validation.
-- Provided image metadata so users understand capacity limits.
-- Implemented global navigation, including Home buttons across the interface.
+### Phase 6 — Plausible Deniability
+- Engineered a multi-layered embedding engine.
+- Allows users to hide a "Decoy Message" and a "Secret Message" in the same carrier, each protected by a unique password.
 
-### Phase 7 — Advanced Stego Algorithms (DCT & Audio)
-- Engineered a robust Randomized DCT embedding algorithm for images, enhancing resistance to steganalysis.
-- Extended the platform to support `.wav` audio files (`stego-audio.ts`), enabling audio steganography.
+### Phase 7 — Forensic Analysis Tools
+- Developed the **LSB Noise Map Visualizer**.
+- Allows users to analyze the "noise" in an image to detect anomalies or verify the stealth of their own stego-files.
 
-### Phase 8 — Security Extensions (Plausible Deniability)
-- Developed the dual-plane embedding system to support Plausible Deniability.
-- Updated the UI to allow for decoy messages and decoy passwords seamlessly alongside the primary secret.
+### Phase 8 — Secure Sharing & Self-Destruction
+- Implemented the **Burn-After-Reading** protocol.
+- Integrated cloud upload with automatic database triggers to delete files immediately after their first retrieval.
 
-### Phase 9 — Steganalysis Toolkit
-- Built a client-side LSB mask visualization tool.
-- Allowed users to analyze suspicious images for characteristic steganographic noise directly in the browser.
+### Phase 9 — Java Backend Integration
+- Upgraded the legacy Java code into a full-featured CLI suite.
+- Ensured 100% feature parity for encryption and LSB steganography between the browser and the Java runtime.
 
-### Phase 10 — Cloud Integration (Secure Sharing & Self-Destruction)
-- Integrated Supabase storage for generating shareable links.
-- Implemented a "Burn-After-Reading" feature where the file deletes itself from the server upon the first extraction request.
+### Phase 10 — UI/UX HUD & Polish
+- Implemented the **Spy-Themed HUD Aesthetic** with premium toggle cards and interactive UI elements.
+- Standardized cross-platform iconography using specialized Unicode-escaped emojis.
+- Refined the "Zero-Knowledge" user flow, making passwords mandatory for maximum security.
 
 ## Getting Started
 
