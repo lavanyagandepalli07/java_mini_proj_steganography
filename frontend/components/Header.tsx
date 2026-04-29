@@ -91,13 +91,13 @@ export default function Header() {
 
       <nav className="site-nav">
         <Link href="/" className="nav-link">
-          [~] ROOT
+          🏠 ROOT
         </Link>
         <Link href="/login" className="nav-link">
-          {authEnabled ? '[#] AUTH' : '[!] INFO'}
+          {authEnabled ? '🔐 AUTH' : 'ℹ️ INFO'}
         </Link>
         <span className="nav-link" onClick={toggleTheme} style={{ cursor: 'pointer' }}>
-          {theme === 'dark' ? '[+] BRIGHTNESS_HIGH' : '[-] BRIGHTNESS_LOW'}
+          {theme === 'dark' ? '☀️ LIGHT' : '🌙 DARK'}
         </span>
       </nav>
 

@@ -9,7 +9,7 @@ import { generateLsbMask } from '../../lib/analysis';
 import { uploadStego, downloadStego, authEnabled, deleteStego } from '../../lib/supabaseClient';
 import PasswordStrength from '../../components/PasswordStrength';
 
-const tabs = ['[H] HIDE', '[R] REVEAL', '[A] ANALYZE'] as const;
+const tabs = ['🌚 HIDE', '🌝 REVEAL', '🔬 ANALYZE'] as const;
 type Tab = (typeof tabs)[number];
 
 type FileInfo = {
@@ -38,15 +38,15 @@ function TypewriterEffect({ text }: { text: string }) {
 }
 
 export default function ToolPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('[H] HIDE');
+  const [activeTab, setActiveTab] = useState<Tab>('🌚 HIDE');
 
   const getTabMetadata = (tab: Tab) => {
     switch (tab) {
-      case '[H] HIDE':
+      case '🌚 HIDE':
         return { title: 'ENCRYPT & EMBED', desc: 'Securely inject payloads into lossless carriers.', eyebrow: ':: SHADOW_PROTOCOL', theme: 'hide' };
-      case '[R] REVEAL':
+      case '🌝 REVEAL':
         return { title: 'EXTRACT & DECRYPT', desc: 'Recover hidden data strings from stego-objects.', eyebrow: ':: SIGNAL_SCAN', theme: 'reveal' };
-      case '[A] ANALYZE':
+      case '🔬 ANALYZE':
         return { title: 'FORENSIC ANALYSIS', desc: 'Identify steganographic anomalies in the L0 noise plane.', eyebrow: ':: SPECTRAL_VISION', theme: 'analyze' };
     }
   };
@@ -93,13 +93,13 @@ export default function ToolPage() {
     const tabParam = searchParams.get('tab');
 
     if (shareId) {
-      setActiveTab('[R] REVEAL');
+      setActiveTab('🌝 REVEAL');
       loadSharedFile(shareId, ext, burn);
     } else if (tabParam) {
       const tabMap: Record<string, Tab> = {
-        hide: '[H] HIDE',
-        reveal: '[R] REVEAL',
-        analyze: '[A] ANALYZE',
+        hide: '🌚 HIDE',
+        reveal: '🌝 REVEAL',
+        analyze: '🔬 ANALYZE',
       };
       if (tabMap[tabParam]) setActiveTab(tabMap[tabParam]);
     }

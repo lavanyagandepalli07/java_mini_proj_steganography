@@ -6,6 +6,7 @@ import Header from '../components/Header';
 const mono = JetBrains_Mono({ 
   subsets: ['latin'],
   display: 'swap',
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
@@ -15,8 +16,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={mono.className}>
+    <html lang="en" className={`${mono.variable} ${mono.className}`}>
       <head>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
