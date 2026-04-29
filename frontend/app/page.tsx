@@ -14,10 +14,10 @@ export default function Home() {
           </p>
           <div className="hero-actions animate-in" style={{ animationDelay: '0.3s', justifyContent: 'center' }}>
             <Link href="/tool?tab=hide" className="button primary">
-              {'\u{1F680}'} INITIATE SHADOW
+              {'\u{1F47E}'} INITIATE SHADOW
             </Link>
             <Link href="/login" className="button secondary">
-              {'\u{1F512}'} ACCESS SECURE VAULT
+              {'\u{1F510}'} ACCESS VAULT
             </Link>
           </div>
         </div>
@@ -26,42 +26,42 @@ export default function Home() {
       <section className="features-grid">
         <Link href="/tool?tab=hide" className="feature-card-link">
           <article>
-            <h2>{'\u{1F510}'} ZERO-KNOWLEDGE CRYPTO</h2>
+            <h2>{'\u{1F512}'} SHADOW ENCRYPTION</h2>
             <p>Your data is encrypted using PBKDF2 and AES-GCM before it ever touches a pixel. True privacy starts here.</p>
             <span className="feature-cta">Explore Crypto {'>'}</span>
           </article>
         </Link>
         <Link href="/tool?tab=hide" className="feature-card-link">
           <article>
-            <h2>{'\u{1F5BC}\u{FE0F}'} DUAL-FORMAT ENGINE</h2>
+            <h2>{'\u{1F4C1}'} CARRIER PLEX</h2>
             <p>Seamlessly embed secrets into lossless PNG images or high-fidelity WAV audio files without a trace.</p>
             <span className="feature-cta">Try Formats {'>'}</span>
           </article>
         </Link>
         <Link href="/tool?tab=analyze" className="feature-card-link">
           <article>
-            <h2>{'\u{1F52C}'} FORENSIC ANALYSIS</h2>
+            <h2>{'\u{1F4E1}'} SIGNAL SCAN</h2>
             <p>Use our LSB noise plane visualizer to detect steganographic anomalies and verify the stealth of your files.</p>
             <span className="feature-cta">Analyze Noise {'>'}</span>
           </article>
         </Link>
         <Link href="/tool?tab=hide" className="feature-card-link">
           <article>
-            <h2>{'\u{1F317}'} PLAUSIBLE DENIABILITY</h2>
+            <h2>{'\u{1F3AD}'} DECOY LAYER</h2>
             <p>Create a second "decoy" layer. If forced to reveal your password, provide the decoy and keep the real secret safe.</p>
             <span className="feature-cta">Learn More {'>'}</span>
           </article>
         </Link>
         <Link href="/tool?tab=hide" className="feature-card-link">
           <article>
-            <h2>{'\u{1F525}'} SELF-DESTRUCT SHARING</h2>
+            <h2>{'\u{2622}\u{FE0F}'} OMEGA LINK</h2>
             <p>Generate secure share links with "Burn-After-Reading" technology. Files are permanently deleted after the first access.</p>
             <span className="feature-cta">Share Securely {'>'}</span>
           </article>
         </Link>
         <Link href="/tool?tab=reveal" className="feature-card-link">
           <article>
-            <h2>{'\u{1F575}\u{FE0F}'} ADVANCED DCT STEALTH</h2>
+            <h2>{'\u{1F575}\u{FE0F}'} STEALTH OPS</h2>
             <p>Use frequency-domain steganography for maximum resistance against statistical analysis and visual inspection.</p>
             <span className="feature-cta">Reveal Secret {'>'}</span>
           </article>

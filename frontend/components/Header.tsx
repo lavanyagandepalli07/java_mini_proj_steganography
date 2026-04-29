@@ -91,13 +91,13 @@ export default function Header() {
 
       <nav className="site-nav">
         <Link href="/" className="nav-link">
-          {'\u{1F3E0}'} ROOT
+          {'\u{1F310}'} ROOT
         </Link>
         <Link href="/login" className="nav-link">
-          {authEnabled ? '\u{1F510}' : '\u{2139}\u{FE0F}'} AUTH
+          {authEnabled ? '\u{1F510} VAULT' : '\u{2139}\u{FE0F} INFO'}
         </Link>
         <span className="nav-link" onClick={toggleTheme} style={{ cursor: 'pointer' }}>
-          {theme === 'dark' ? '\u{2600}\u{FE0F}' : '\u{1F319}'} {theme === 'dark' ? 'LIGHT' : 'DARK'}
+          {theme === 'dark' ? '\u{2600}\u{FE0F}' : '\u{1F319}'} {theme === 'dark' ? 'LIGHT_MODE' : 'DARK_MODE'}
         </span>
       </nav>
 

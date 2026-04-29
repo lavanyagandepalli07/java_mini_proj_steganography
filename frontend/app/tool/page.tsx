@@ -9,7 +9,7 @@ import { generateLsbMask } from '../../lib/analysis';
 import { uploadStego, downloadStego, authEnabled, deleteStego } from '../../lib/supabaseClient';
 import PasswordStrength from '../../components/PasswordStrength';
 
-const tabs = ['\u{1F31A} HIDE', '\u{1F31D} REVEAL', '\u{1F52C} ANALYZE'] as const;
+const tabs = ['\u{1F47E} SHADOW', '\u{1F50E} EXTRACT', '\u{1F4E1} SCAN'] as const;
 type Tab = (typeof tabs)[number];
 
 type FileInfo = {
@@ -38,16 +38,16 @@ function TypewriterEffect({ text }: { text: string }) {
 }
 
 export default function ToolPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('🌚 HIDE');
+  const [activeTab, setActiveTab] = useState<Tab>('\u{1F47E} SHADOW');
 
   const getTabMetadata = (tab: Tab) => {
     switch (tab) {
-      case '\u{1F31A} HIDE':
-        return { title: 'ENCRYPT & EMBED', desc: 'Securely inject payloads into lossless carriers.', eyebrow: ':: SHADOW_PROTOCOL', theme: 'hide' };
-      case '\u{1F31D} REVEAL':
-        return { title: 'EXTRACT & DECRYPT', desc: 'Recover hidden data strings from stego-objects.', eyebrow: ':: SIGNAL_SCAN', theme: 'reveal' };
-      case '\u{1F52C} ANALYZE':
-        return { title: 'FORENSIC ANALYSIS', desc: 'Identify steganographic anomalies in the L0 noise plane.', eyebrow: ':: SPECTRAL_VISION', theme: 'analyze' };
+      case '\u{1F47E} SHADOW':
+        return { title: 'ENCRYPT & EMBED', desc: 'Inject secret payloads into lossless carriers.', eyebrow: ':: SHADOW_PROTOCOL', theme: 'hide' };
+      case '\u{1F50E} EXTRACT':
+        return { title: 'RECOVER & DECRYPT', desc: 'Extract hidden strings from carrier objects.', eyebrow: ':: SIGNAL_SCAN', theme: 'reveal' };
+      case '\u{1F4E1} SCAN':
+        return { title: 'FORENSIC ANALYSIS', desc: 'Scan L0 noise planes for anomalies.', eyebrow: ':: SPECTRAL_VISION', theme: 'analyze' };
     }
   };
 
@@ -93,13 +93,13 @@ export default function ToolPage() {
     const tabParam = searchParams.get('tab');
 
     if (shareId) {
-      setActiveTab('\u{1F31D} REVEAL');
+      setActiveTab('\u{1F50E} EXTRACT');
       loadSharedFile(shareId, ext, burn);
     } else if (tabParam) {
       const tabMap: Record<string, Tab> = {
-        hide: '\u{1F31A} HIDE',
-        reveal: '\u{1F31D} REVEAL',
-        analyze: '\u{1F52C} ANALYZE',
+        hide: '\u{1F47E} SHADOW',
+        reveal: '\u{1F50E} EXTRACT',
+        analyze: '\u{1F4E1} SCAN',
       };
       if (tabMap[tabParam]) setActiveTab(tabMap[tabParam]);
     }
@@ -373,7 +373,7 @@ export default function ToolPage() {
           ))}
         </div>
 
-        {activeTab === '\u{1F31A} HIDE' && (
+        {activeTab === '\u{1F47E} SHADOW' && (
           <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleHide(); }}>
             <div className="form-grid">
               {/* Left Column: Data Input */}
@@ -479,7 +479,7 @@ export default function ToolPage() {
           </form>
         )}
 
-        {activeTab === '\u{1F31D} REVEAL' && (
+        {activeTab === '\u{1F50E} EXTRACT' && (
           <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleReveal(); }}>
             <div className="form-grid">
               <div className="form-section">
@@ -533,7 +533,7 @@ export default function ToolPage() {
           </form>
         )}
 
-        {activeTab === '\u{1F52C} ANALYZE' && (
+        {activeTab === '\u{1F4E1} SCAN' && (
           <div className="form-section">
             <h3>[*] LSB PLANE ANALYSIS</h3>
             <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
