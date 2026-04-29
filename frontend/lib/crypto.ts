@@ -1,3 +1,5 @@
+export type EncryptionAlgorithm = 'aes-gcm' | 'aes-cbc';
+
 export type CryptoResult = {
   success: true;
   payload: Uint8Array;
@@ -7,14 +9,20 @@ export type CryptoResult = {
 };
 
 const MAGIC = new Uint8Array([0x53, 0x54, 0x45, 0x47]); // 'STEG'
-const VERSION = 0x01;
+const VERSION_GCM = 0x01;
+const VERSION_CBC = 0x02;
 const SALT_LENGTH = 16;
-const IV_LENGTH = 12;
+const IV_LENGTH_GCM = 12;
+const IV_LENGTH_CBC = 16;
 const KEY_LENGTH_BITS = 256;
 const PBKDF2_ITERATIONS = 200_000;
 const GCM_TAG_LENGTH_BITS = 128;
 
-export async function encrypt(plaintext: string, password: string): Promise<CryptoResult> {
+export async function encrypt(
+  plaintext: string, 
+  password: string, 
+  algorithm: EncryptionAlgorithm = 'aes-gcm'
+): Promise<CryptoResult> {
   if (!plaintext) {
     return { success: false, error: 'Plaintext is required' };
   }
@@ -23,9 +31,12 @@ export async function encrypt(plaintext: string, password: string): Promise<Cryp
     const encoder = new TextEncoder();
     const plaintextBytes = encoder.encode(plaintext);
 
+    const ivLength = algorithm === 'aes-gcm' ? IV_LENGTH_GCM : IV_LENGTH_CBC;
+    const version = algorithm === 'aes-gcm' ? VERSION_GCM : VERSION_CBC;
+
     // Generate salt and IV
     const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
-    const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
+    const iv = crypto.getRandomValues(new Uint8Array(ivLength));
 
     // Derive key
     const keyMaterial = await crypto.subtle.importKey(
@@ -36,6 +47,8 @@ export async function encrypt(plaintext: string, password: string): Promise<Cryp
       ['deriveBits', 'deriveKey']
     );
 
+    const cryptoAlgo = algorithm === 'aes-gcm' ? 'AES-GCM' : 'AES-CBC';
+
     const key = await crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
@@ -44,17 +57,26 @@ export async function encrypt(plaintext: string, password: string): Promise<Cryp
         hash: 'SHA-256',
       },
       keyMaterial,
-      { name: 'AES-GCM', length: KEY_LENGTH_BITS },
+      { name: cryptoAlgo, length: KEY_LENGTH_BITS },
       false,
       ['encrypt']
     );
 
     // Encrypt
-    const ciphertext = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv, tagLength: GCM_TAG_LENGTH_BITS },
-      key,
-      plaintextBytes
-    );
+    let ciphertext: ArrayBuffer;
+    if (algorithm === 'aes-gcm') {
+      ciphertext = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv, tagLength: GCM_TAG_LENGTH_BITS },
+        key,
+        plaintextBytes
+      );
+    } else {
+      ciphertext = await crypto.subtle.encrypt(
+        { name: 'AES-CBC', iv },
+        key,
+        plaintextBytes
+      );
+    }
 
     // Build payload
     const payload = new Uint8Array(
@@ -65,7 +87,7 @@ export async function encrypt(plaintext: string, password: string): Promise<Cryp
     // MAGIC
     payload.set(MAGIC, 0);
     // VERSION
-    view.setUint8(4, VERSION);
+    view.setUint8(4, version);
     // CIPHERTEXT_LENGTH
     view.setUint32(5, ciphertext.byteLength, false); // big-endian
     // SALT_LEN
@@ -100,9 +122,13 @@ export async function decrypt(payload: Uint8Array, password: string): Promise<Cr
     }
 
     // Check VERSION
-    if (view.getUint8(4) !== VERSION) {
+    const version = view.getUint8(4);
+    if (version !== VERSION_GCM && version !== VERSION_CBC) {
       return { success: false, error: 'Unsupported payload version' };
     }
+
+    const algorithm: EncryptionAlgorithm = version === VERSION_GCM ? 'aes-gcm' : 'aes-cbc';
+    const cryptoAlgo = algorithm === 'aes-gcm' ? 'AES-GCM' : 'AES-CBC';
 
     const ciphertextLength = view.getUint32(5, false); // big-endian
     const saltLen = view.getUint8(9);
@@ -134,20 +160,26 @@ export async function decrypt(payload: Uint8Array, password: string): Promise<Cr
         hash: 'SHA-256',
       },
       keyMaterial,
-      { name: 'AES-GCM', length: KEY_LENGTH_BITS },
+      { name: cryptoAlgo, length: KEY_LENGTH_BITS },
       false,
       ['decrypt']
     );
 
     // Decrypt
-    const plaintextBytes = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv, tagLength: GCM_TAG_LENGTH_BITS },
-      key,
-      ciphertext
-    );
-
-    const decoder = new TextDecoder();
-    const plaintext = decoder.decode(plaintextBytes);
+    let plaintextBytes: ArrayBuffer;
+    if (algorithm === 'aes-gcm') {
+      plaintextBytes = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv, tagLength: GCM_TAG_LENGTH_BITS },
+        key,
+        ciphertext
+      );
+    } else {
+      plaintextBytes = await crypto.subtle.decrypt(
+        { name: 'AES-CBC', iv },
+        key,
+        ciphertext
+      );
+    }
 
     return { success: true, payload: new Uint8Array(plaintextBytes) };
   } catch (error) {
@@ -158,4 +190,4 @@ export async function decrypt(payload: Uint8Array, password: string): Promise<Cr
 export function payloadToString(payload: Uint8Array): string {
   const decoder = new TextDecoder();
   return decoder.decode(payload);
-}
+}

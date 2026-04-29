@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import StatusAlert from '../../components/StatusAlert';
-import { encrypt, decrypt } from '../../lib/crypto';
+import { encrypt, decrypt, EncryptionAlgorithm } from '../../lib/crypto';
 import { embed, extract, calculateCapacity, Algorithm, embedDeniable } from '../../lib/stego';
 import { embedAudio, extractAudio, calculateAudioCapacity } from '../../lib/stego-audio';
 import { generateLsbMask } from '../../lib/analysis';
@@ -54,6 +54,7 @@ export default function ToolPage() {
   const metadata = getTabMetadata(activeTab);
 
   const [algorithm, setAlgorithm] = useState<Algorithm>('lsb');
+  const [encryptionAlgorithm, setEncryptionAlgorithm] = useState<EncryptionAlgorithm>('aes-gcm');
   const [status, setStatus] = useState('');
   const [statusType, setStatusType] = useState<'info' | 'success' | 'error'>('info');
   const [loading, setLoading] = useState(false);
@@ -207,7 +208,7 @@ export default function ToolPage() {
 
           finishHide(result.data as Blob, 'png');
       } else {
-          const encrypted = await encrypt(hideText, hidePassword || '');
+          const encrypted = await encrypt(hideText, hidePassword || '', encryptionAlgorithm);
           if (!encrypted.success) throw new Error(encrypted.error);
 
           let result;
@@ -433,11 +434,19 @@ export default function ToolPage() {
                 <h3>{'\u{1F4E4}'} 2. Carrier & Output</h3>
 
                 <div className="algorithm-selector" style={{ padding: '1rem', background: 'var(--surface)', borderRadius: '0', border: '1px solid var(--border)' }}>
-                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: 0 }}>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
                     <strong>{'\u{1F570}\u{FE0F}'} Hiding Algorithm</strong>
                     <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value as Algorithm)} disabled={loading || isDeniable}>
                       <option value="lsb">L0: STANDARD (SPATIAL LSB)</option>
                       <option value="dct">F1: ADVANCED (RANDOMIZED DCT)</option>
+                    </select>
+                  </label>
+
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: 0 }}>
+                    <strong>{'\u{1F512}'} Encryption Algorithm</strong>
+                    <select value={encryptionAlgorithm} onChange={(e) => setEncryptionAlgorithm(e.target.value as EncryptionAlgorithm)} disabled={loading}>
+                      <option value="aes-gcm">AES-256 GCM (Authenticated)</option>
+                      <option value="aes-cbc">AES-256 CBC (Legacy)</option>
                     </select>
                   </label>
                 </div>

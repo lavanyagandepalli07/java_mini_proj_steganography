@@ -7,7 +7,7 @@ A comprehensive client-side steganography and secure communication web suite bui
 - **Multi-Format Steganography**: Hide secret text inside PNG images or WAV audio files without affecting their apparent quality.
 - **Client-Side Cryptography**: True zero-knowledge architecture. All encryption/decryption happens in the browser using the Web Crypto API.
   - PBKDF2 with HMAC-SHA256 for key derivation.
-  - AES-GCM for authenticated encryption with a random salt and IV per operation.
+  - **AES-GCM** (Default) or **AES-CBC** (Legacy) for encryption with a random salt and IV per operation.
 - **Advanced Steganography Algorithms**:
   - **Standard (Spatial LSB)**: High capacity embedding for both images and audio.
   - **Advanced (Randomized DCT)**: Highest stealth for images, resistant to basic statistical analysis.
@@ -27,13 +27,14 @@ A comprehensive client-side steganography and secure communication web suite bui
 ### Cryptography & Payload Format
 The payload is structured to ensure reliable extraction and decryption (fully compatible between Frontend and Java Backend):
 - `MAGIC`: 4 bytes `0x53 0x54 0x45 0x47` (`STEG`)
-- `VERSION`: 1 byte (currently `0x01`)
+- `VERSION`: 1 byte (`0x01` for AES-GCM, `0x02` for AES-CBC)
 - `LENGTH`: 4 bytes unsigned big-endian ciphertext length
 - `SALT_LEN`: 1 byte salt length (fixed 16 bytes)
-- `IV_LEN`: 1 byte IV length (fixed 12 bytes)
+- `IV_LEN`: 1 byte IV length (12 bytes for GCM, 16 bytes for CBC)
 - `SALT`: 16 bytes for PBKDF2
-- `IV`: 12 bytes for AES-GCM
+- `IV`: 12/16 bytes for AES
 - `CIPHERTEXT`: Encrypted UTF-8 text
+
 
 ### Steganography Engines
 - **Image LSB (Shared)**: Both Frontend and Java Backend implement Spatial LSB. It embeds payload bits into the least significant bits of the Red, Green, and Blue channels.

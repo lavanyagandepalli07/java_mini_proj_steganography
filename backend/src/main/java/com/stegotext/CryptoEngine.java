@@ -18,9 +18,11 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public final class CryptoEngine {
     private static final int MAGIC_NUMBER = 0x53544547; // "STEG"
-    private static final byte VERSION = 0x01;
+    private static final byte VERSION_GCM = 0x01;
+    private static final byte VERSION_CBC = 0x02;
     private static final int SALT_LENGTH = 16;
-    private static final int IV_LENGTH = 12;
+    private static final int IV_LENGTH_GCM = 12;
+    private static final int IV_LENGTH_CBC = 16;
     private static final int KEY_LENGTH_BITS = 256;
     private static final int PBKDF2_ITERATIONS = 200_000;
     private static final int GCM_TAG_LENGTH_BITS = 128;
@@ -32,14 +34,13 @@ public final class CryptoEngine {
     }
 
     /**
-     * Encrypts a plaintext string using a password.
-     *
-     * @param plaintext The text to encrypt
-     * @param password  The password for encryption
-     * @return The binary payload containing magic, version, salt, IV, and ciphertext
-     * @throws GeneralSecurityException if encryption fails
+     * Encrypts a plaintext string using a password (defaults to GCM).
      */
     public static byte[] encrypt(String plaintext, char[] password) throws GeneralSecurityException {
+        return encrypt(plaintext, password, true); // default to GCM
+    }
+
+    public static byte[] encrypt(String plaintext, char[] password, boolean useGcm) throws GeneralSecurityException {
         Objects.requireNonNull(plaintext, "Plaintext must not be null");
         Objects.requireNonNull(password, "Password must not be null");
         if (password.length == 0) {
@@ -49,24 +50,27 @@ public final class CryptoEngine {
         byte[] salt = randomBytes(SALT_LENGTH);
         SecretKey key = deriveKey(password, salt);
 
-        byte[] iv = randomBytes(IV_LENGTH);
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv);
-        cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+        int ivLen = useGcm ? IV_LENGTH_GCM : IV_LENGTH_CBC;
+        byte[] iv = randomBytes(ivLen);
+        
+        Cipher cipher;
+        if (useGcm) {
+            cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+        } else {
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key, new javax.crypto.spec.IvParameterSpec(iv));
+        }
 
         byte[] plaintextBytes = plaintext.getBytes(StandardCharsets.UTF_8);
         byte[] ciphertext = cipher.doFinal(plaintextBytes);
 
-        return encodePayload(salt, iv, ciphertext);
+        return encodePayload(useGcm ? VERSION_GCM : VERSION_CBC, salt, iv, ciphertext);
     }
 
     /**
      * Decrypts a binary payload using a password.
-     *
-     * @param payload  The binary payload to decrypt
-     * @param password The password for decryption
-     * @return The decrypted plaintext
-     * @throws GeneralSecurityException if decryption or authentication fails
      */
     public static String decrypt(byte[] payload, char[] password) throws GeneralSecurityException {
         Objects.requireNonNull(payload, "Payload must not be null");
@@ -81,9 +85,15 @@ public final class CryptoEngine {
         PayloadHeader header = decodePayload(payload);
         SecretKey key = deriveKey(password, header.salt());
 
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH_BITS, header.iv());
-        cipher.init(Cipher.DECRYPT_MODE, key, spec);
+        Cipher cipher;
+        if (header.version() == VERSION_GCM) {
+            cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH_BITS, header.iv());
+            cipher.init(Cipher.DECRYPT_MODE, key, spec);
+        } else {
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, key, new javax.crypto.spec.IvParameterSpec(header.iv()));
+        }
 
         byte[] plaintextBytes = cipher.doFinal(header.ciphertext());
         return new String(plaintextBytes, StandardCharsets.UTF_8);
@@ -102,12 +112,11 @@ public final class CryptoEngine {
         return new SecretKeySpec(rawKey, "AES");
     }
 
-    private static byte[] encodePayload(byte[] salt, byte[] iv, byte[] ciphertext) {
-        // Format: MAGIC(4) + VERSION(1) + LENGTH(4) + SALT_LEN(1) + IV_LEN(1) + SALT + IV + CIPHERTEXT
+    private static byte[] encodePayload(byte version, byte[] salt, byte[] iv, byte[] ciphertext) {
         int size = 4 + 1 + 4 + 1 + 1 + salt.length + iv.length + ciphertext.length;
         ByteBuffer buffer = ByteBuffer.allocate(size);
         buffer.putInt(MAGIC_NUMBER);
-        buffer.put(VERSION);
+        buffer.put(version);
         buffer.putInt(ciphertext.length);
         buffer.put((byte) salt.length);
         buffer.put((byte) iv.length);
@@ -118,7 +127,7 @@ public final class CryptoEngine {
     }
 
     private static PayloadHeader decodePayload(byte[] payload) {
-        if (payload.length < 11) { // Min header size: 4+1+4+1+1
+        if (payload.length < 11) {
             throw new IllegalArgumentException("Payload too short");
         }
         ByteBuffer buffer = ByteBuffer.wrap(payload);
@@ -127,7 +136,7 @@ public final class CryptoEngine {
             throw new IllegalArgumentException("Invalid payload header (Magic number mismatch)");
         }
         byte version = buffer.get();
-        if (version != VERSION) {
+        if (version != VERSION_GCM && version != VERSION_CBC) {
             throw new IllegalArgumentException("Unsupported payload version: " + version);
         }
         int ciphertextLength = buffer.getInt();
@@ -146,13 +155,11 @@ public final class CryptoEngine {
         buffer.get(iv);
         buffer.get(ciphertext);
 
-        return new PayloadHeader(salt, iv, ciphertext);
+        return new PayloadHeader(version, salt, iv, ciphertext);
     }
 
-    /**
-     * Internal representation of the decrypted payload components.
-     */
-    private record PayloadHeader(byte[] salt, byte[] iv, byte[] ciphertext) {
+    private record PayloadHeader(byte version, byte[] salt, byte[] iv, byte[] ciphertext) {
     }
 }
+
 
