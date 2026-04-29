@@ -14,7 +14,7 @@ export default function Home() {
           </p>
           <div className="hero-actions animate-in" style={{ animationDelay: '0.3s', justifyContent: 'center' }}>
             <Link href="/tool?tab=hide" className="button primary">
-              [>] INITIATE SHADOW
+              {'[>] INITIATE SHADOW'}
             </Link>
             <Link href="/login" className="button secondary">
               [#] ACCESS SECURE VAULT

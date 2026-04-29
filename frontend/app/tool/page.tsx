@@ -81,6 +81,10 @@ export default function ToolPage() {
   const [analyzeFile, setAnalyzeFile] = useState<File | null>(null);
   const [analyzeMaskUrl, setAnalyzeMaskUrl] = useState<string | null>(null);
 
+  const [showHidePassword, setShowHidePassword] = useState(false);
+  const [showDecoyPassword, setShowDecoyPassword] = useState(false);
+  const [showRevealPassword, setShowRevealPassword] = useState(false);
+
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const shareId = searchParams.get('share');
@@ -381,7 +385,12 @@ export default function ToolPage() {
                 </label>
                 <label>
                   🗝️ Master Password
-                  <input type="password" value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" />
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <input type={showHidePassword ? "text" : "password"} value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" style={{ width: '100%', paddingRight: '2.5rem' }} />
+                    <button type="button" onClick={() => setShowHidePassword(!showHidePassword)} style={{ position: 'absolute', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}>
+                      {showHidePassword ? '👁️' : '🙈'}
+                    </button>
+                  </div>
                   <PasswordStrength password={hidePassword} />
                 </label>
 
@@ -405,7 +414,12 @@ export default function ToolPage() {
                         </label>
                         <label>
                           Decoy Password
-                          <input type="password" value={decoyPassword} onChange={(e) => setDecoyPassword(e.target.value)} disabled={loading} placeholder="e.g. 1234" />
+                          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                            <input type={showDecoyPassword ? "text" : "password"} value={decoyPassword} onChange={(e) => setDecoyPassword(e.target.value)} disabled={loading} placeholder="e.g. 1234" style={{ width: '100%', paddingRight: '2.5rem' }} />
+                            <button type="button" onClick={() => setShowDecoyPassword(!showDecoyPassword)} style={{ position: 'absolute', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}>
+                              {showDecoyPassword ? '👁️' : '🙈'}
+                            </button>
+                          </div>
                           <PasswordStrength password={decoyPassword} />
                         </label>
                       </div>
@@ -429,7 +443,7 @@ export default function ToolPage() {
                 </div>
 
                 <label>
-                  [>] Cover file (Image or WAV)
+                  {'[>] Cover file (Image or WAV)'}
                   <input type="file" accept="image/*,audio/wav" onChange={(e) => handleHideFileChange(e.target.files?.[0] || null)} disabled={loading} required/>
                 </label>
 
@@ -471,13 +485,18 @@ export default function ToolPage() {
               <div className="form-section">
                 <h3>[#] 1. Carrier Input</h3>
                 <label>
-                  [>] Stego file (Image or WAV)
+                  {'[>] Stego file (Image or WAV)'}
                   <input type="file" accept="image/*,audio/wav" onChange={(e) => { setRevealFile(e.target.files?.[0] || null); setRevealedText(''); }} disabled={loading} required={!revealFile} />
                   {revealFile && <small>Ready to extract from: {revealFile.name}</small>}
                 </label>
                 <label>
                   🗝️ Password
-                  <input type="password" placeholder="Required if hidden with a password or DCT" value={revealPassword} onChange={(e) => setRevealPassword(e.target.value)} disabled={loading} />
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <input type={showRevealPassword ? "text" : "password"} placeholder="Required if hidden with a password or DCT" value={revealPassword} onChange={(e) => setRevealPassword(e.target.value)} disabled={loading} style={{ width: '100%', paddingRight: '2.5rem' }} />
+                    <button type="button" onClick={() => setShowRevealPassword(!showRevealPassword)} style={{ position: 'absolute', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}>
+                      {showRevealPassword ? '👁️' : '🙈'}
+                    </button>
+                  </div>
                 </label>
                 <div className="form-actions">
                   <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading || !revealFile}>
