@@ -71,6 +71,7 @@ export default function ToolPage() {
   const [isDeniable, setIsDeniable] = useState(false);
   const [decoyText, setDecoyText] = useState('');
   const [decoyPassword, setDecoyPassword] = useState('');
+  const [isSecureShareEnabled, setIsSecureShareEnabled] = useState(false);
   const [burnAfterReading, setBurnAfterReading] = useState(false);
 
   // Reveal State
@@ -222,6 +223,11 @@ export default function ToolPage() {
           
           if (!result.success) throw new Error(result.error);
           finishHide(result.data as Blob, ext);
+
+          // Auto-trigger share link if enabled
+          if (isSecureShareEnabled && authEnabled) {
+            await handleCreateShareLinkExplicit(result.data as Blob, ext);
+          }
       }
     } catch (error) {
       setStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -243,14 +249,13 @@ export default function ToolPage() {
     setStatusType('success');
   };
 
-  const handleCreateShareLink = async () => {
-    if (!lastStegoBlob || !authEnabled) return;
+  const handleCreateShareLinkExplicit = async (blob: Blob, ext: string) => {
     setLoading(true);
     setStatus('Uploading to secure storage...');
     try {
-      const uuid = await uploadStego(lastStegoBlob.blob, lastStegoBlob.ext);
+      const uuid = await uploadStego(blob, ext);
       if (uuid) {
-        let link = `${window.location.origin}${window.location.pathname}?share=${uuid}&ext=${lastStegoBlob.ext}`;
+        let link = `${window.location.origin}${window.location.pathname}?share=${uuid}&ext=${ext}`;
         if (burnAfterReading) link += '&burn=true';
         setShareLink(link);
         setStatus('Share link created successfully!');
@@ -264,6 +269,11 @@ export default function ToolPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateShareLink = async () => {
+    if (!lastStegoBlob || !authEnabled) return;
+    await handleCreateShareLinkExplicit(lastStegoBlob.blob, lastStegoBlob.ext);
   };
 
   const handleReveal = async () => {
@@ -463,26 +473,34 @@ export default function ToolPage() {
                   </div>
                 )}
 
-                <div className="form-actions">
-                  <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading}>
-                    {loading ? '\u{23F3} PROCESSING' : '\u{1F680} ENCRYPT & DOWNLOAD'}
-                  </button>
-                </div>
-                
-                {lastStegoBlob && authEnabled && (
-                  <div style={{marginTop: '1rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: '0', background: 'var(--surface)'}}>
-                    <h4 style={{ margin: '0 0 0.5rem 0' }}>{'\u{1F4E1}'} Secure Sharing</h4>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                {authEnabled && (
+                  <div style={{ padding: '1rem', border: '1px solid var(--border)', background: 'var(--surface-muted)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.9rem', marginBottom: 0 }}>
+                      <input type="checkbox" checked={isSecureShareEnabled} onChange={e => setIsSecureShareEnabled(e.target.checked)} disabled={loading} />
+                      {'\u{1F4E1}'} Enable Secure Sharing
+                    </label>
+                    {isSecureShareEnabled && (
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--muted)', marginLeft: '1.5rem' }}>
                         <input type="checkbox" checked={burnAfterReading} onChange={e => setBurnAfterReading(e.target.checked)} disabled={loading} />
                         {'\u{2622}\u{FE0F}'} Burn after reading (Self-destruct)
-                    </label>
-                    {shareLink ? (
-                      <input type="text" readOnly value={shareLink} onClick={e => (e.target as HTMLInputElement).select()} style={{marginTop: '0.5rem', fontSize: '0.8rem'}}/>
-                    ) : (
-                      <button type="button" className="button secondary small" onClick={handleCreateShareLink} disabled={loading} style={{marginTop: '0.5rem', width: '100%'}}>{'\u{1F4E1} GENERATE SHARE LINK'}</button>
+                      </label>
                     )}
                   </div>
                 )}
+
+                <div className="form-actions">
+                  <button type="submit" className="button primary" style={{ width: '100%' }} disabled={loading}>
+                    {loading ? '\u{23F3} PROCESSING' : (isSecureShareEnabled ? '\u{1F680} ENCRYPT & SHARE' : '\u{1F680} ENCRYPT & DOWNLOAD')}
+                  </button>
+                </div>
+                
+                {shareLink && (
+                  <div style={{marginTop: '1rem', padding: '1rem', border: '1px solid var(--accent)', borderRadius: '0', background: 'var(--accent-soft)'}}>
+                    <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--accent-strong)' }}>{'\u{2705}'} Secure Share Link</h4>
+                    <input type="text" readOnly value={shareLink} onClick={e => (e.target as HTMLInputElement).select()} style={{ width: '100%', fontSize: '0.8rem' }}/>
+                  </div>
+                )}
+
               </div>
             </div>
           </form>
