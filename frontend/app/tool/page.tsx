@@ -395,8 +395,8 @@ export default function ToolPage() {
                 </label>
 
                 <div className="deniable-toggle-card-wrapper" style={{ marginTop: '1rem' }}>
-                  <div className={`deniable-toggle-card ${isDeniable ? 'active' : ''}`} onClick={() => !loading && setIsDeniable(!isDeniable)}>
-                    <div className="deniable-toggle-header">
+                  <div className={`deniable-toggle-card ${isDeniable ? 'active' : ''}`}>
+                    <div className="deniable-toggle-header" onClick={() => !loading && setIsDeniable(!isDeniable)} style={{ cursor: 'pointer' }}>
                       <div className="deniable-toggle-icon">{isDeniable ? '\u{1F318}' : '\u{1F311}'}</div>
                       <div className="deniable-toggle-info">
                         <span className="deniable-toggle-title">PLAUSIBLE DENIABILITY</span>
@@ -407,7 +407,7 @@ export default function ToolPage() {
                       </div>
                     </div>
                     {isDeniable && (
-                      <div className="deniable-fields animate-in">
+                      <div className="deniable-fields animate-in" onClick={(e) => e.stopPropagation()}>
                         <label>
                           Decoy Message
                           <textarea rows={3} value={decoyText} onChange={(e) => setDecoyText(e.target.value)} disabled={loading} required placeholder="Enter a harmless message someone can see..."/>
