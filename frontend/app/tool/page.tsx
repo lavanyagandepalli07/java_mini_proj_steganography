@@ -178,18 +178,13 @@ export default function ToolPage() {
   };
 
   const handleHide = async () => {
-    if (!hideFile || !hideText.trim()) {
-      setStatus('Please provide both a file and text to hide.');
+    if (!hideFile || !hideText.trim() || !hidePassword.trim()) {
+      setStatus('Please provide a file, secret text, and a master password.');
       setStatusType('error');
       return;
     }
 
-    const isAudio = hideFile.type === 'audio/wav';
-    if (!isAudio && algorithm === 'dct' && !hidePassword) {
-      setStatus('Password is required for Advanced (DCT) mode.');
-      setStatusType('error');
-      return;
-    }
+
 
     setLoading(true);
     setStatus('Encrypting and embedding...');
@@ -397,7 +392,7 @@ export default function ToolPage() {
                 <label>
                   {'\u{1F5DD}\u{FE0F}'} Master Password
                   <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <input type={showHidePassword ? "text" : "password"} value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} placeholder="Optional, but recommended" style={{ width: '100%', paddingRight: '2.5rem' }} />
+                    <input type={showHidePassword ? "text" : "password"} value={hidePassword} onChange={(e) => setHidePassword(e.target.value)} disabled={loading} required placeholder="Required for encryption" style={{ width: '100%', paddingRight: '2.5rem' }} />
                     <button type="button" onClick={() => setShowHidePassword(!showHidePassword)} style={{ position: 'absolute', right: '0.5rem', background: 'transparent', border: 'none', color: 'var(--accent-strong)', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}>
                       {showHidePassword ? '\u{1F576}\u{FE0F}' : '\u{1F648}'}
                     </button>
@@ -474,16 +469,27 @@ export default function ToolPage() {
                 )}
 
                 {authEnabled && (
-                  <div style={{ padding: '1rem', border: '1px solid var(--border)', background: 'var(--surface-muted)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.9rem', marginBottom: 0 }}>
-                      <input type="checkbox" checked={isSecureShareEnabled} onChange={e => setIsSecureShareEnabled(e.target.checked)} disabled={loading} />
-                      {'\u{1F4E1}'} Enable Secure Sharing
-                    </label>
+                  <div className={`deniable-toggle-card ${isSecureShareEnabled ? 'active' : ''}`} style={{ marginTop: '0.5rem' }}>
+                    <div className="deniable-toggle-header" onClick={() => !loading && setIsSecureShareEnabled(!isSecureShareEnabled)} style={{ cursor: 'pointer' }}>
+                      <div className="deniable-toggle-icon">{isSecureShareEnabled ? '\u{1F4E1}' : '\u{1F4E6}'}</div>
+                      <div className="deniable-toggle-info">
+                        <span className="deniable-toggle-title">SECURE CLOUD SHARING</span>
+                        <span className="deniable-toggle-desc">Auto-upload and generate self-destruct link.</span>
+                      </div>
+                      <div className={`deniable-pill ${isSecureShareEnabled ? 'on' : ''}`}>
+                        <div className="deniable-pill-knob" />
+                      </div>
+                    </div>
                     {isSecureShareEnabled && (
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--muted)', marginLeft: '1.5rem' }}>
-                        <input type="checkbox" checked={burnAfterReading} onChange={e => setBurnAfterReading(e.target.checked)} disabled={loading} />
-                        {'\u{2622}\u{FE0F}'} Burn after reading (Self-destruct)
-                      </label>
+                      <div className="deniable-fields animate-in" onClick={(e) => e.stopPropagation()}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--accent-strong)', cursor: 'pointer', fontWeight: 600 }}>
+                          <input type="checkbox" checked={burnAfterReading} onChange={e => setBurnAfterReading(e.target.checked)} disabled={loading} />
+                          {'\u{2622}\u{FE0F}'} Burn after reading (Self-destruct)
+                        </label>
+                        <p style={{ margin: '0.5rem 0 0 1.5rem', fontSize: '0.8rem', color: 'var(--muted)' }}>
+                          File will be permanently deleted from the cloud after the first access.
+                        </p>
+                      </div>
                     )}
                   </div>
                 )}
