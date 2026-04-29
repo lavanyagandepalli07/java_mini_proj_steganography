@@ -373,7 +373,7 @@ export default function ToolPage() {
           ))}
         </div>
 
-        {activeTab === '[H] HIDE' && (
+        {activeTab === '🌚 HIDE' && (
           <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleHide(); }}>
             <div className="form-grid">
               {/* Left Column: Data Input */}
@@ -479,7 +479,7 @@ export default function ToolPage() {
           </form>
         )}
 
-        {activeTab === '[R] REVEAL' && (
+        {activeTab === '🌝 REVEAL' && (
           <form className="panel-form" onSubmit={(e) => { e.preventDefault(); handleReveal(); }}>
             <div className="form-grid">
               <div className="form-section">
@@ -533,7 +533,7 @@ export default function ToolPage() {
           </form>
         )}
 
-        {activeTab === '[A] ANALYZE' && (
+        {activeTab === '🔬 ANALYZE' && (
           <div className="form-section">
             <h3>[*] LSB PLANE ANALYSIS</h3>
             <p style={{ fontSize: '0.95rem', marginBottom: '1rem' }}>
