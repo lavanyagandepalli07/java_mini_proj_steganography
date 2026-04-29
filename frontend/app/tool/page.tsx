@@ -184,13 +184,13 @@ export default function ToolPage() {
       return;
     }
 
-    const isAudio = hideFile.type === 'audio/wav';
-
     setLoading(true);
     setStatus('Encrypting and embedding...');
     setStatusType('info');
 
     try {
+      const isAudio = hideFile.type === 'audio/wav';
+
       if (isDeniable) {
           if (!decoyText.trim()) throw new Error('Decoy text is required for Plausible Deniability');
           const decoyEncrypted = await encrypt(decoyText, decoyPassword || '');
